@@ -1,0 +1,3 @@
+useDynLib(afCEC)
+exportPattern("^[[:alpha:]]+")
+importFrom(Rcpp, evalCpp)
