@@ -17,8 +17,12 @@ CalculateEllipsesOfConfidenceForQuadraticFunction <- function(res, confidence, s
     .Call('afCEC_CalculateEllipsesOfConfidenceForQuadraticFunction', PACKAGE = 'afCEC', res, confidence, segments)
 }
 
-GenerateCodeForCalculatingEllipseOfConfidence <- function(formula) {
-    .Call('afCEC_GenerateCodeForCalculatingEllipseOfConfidence', PACKAGE = 'afCEC', formula)
+GenerateCodeForCalculatingEllipsesOfConfidence <- function(formula) {
+    .Call('afCEC_GenerateCodeForCalculatingEllipsesOfConfidence', PACKAGE = 'afCEC', formula)
+}
+
+CalculateEllipsoidsOfConfidenceForQuadraticFunction <- function(res, confidence, gridRes) {
+    .Call('afCEC_CalculateEllipsoidsOfConfidenceForQuadraticFunction', PACKAGE = 'afCEC', res, confidence, gridRes)
 }
 
 GenerateCodeForCalculatingEllipsoidsOfConfidence <- function(formula) {

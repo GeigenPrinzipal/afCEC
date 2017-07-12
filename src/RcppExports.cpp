@@ -51,14 +51,27 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// GenerateCodeForCalculatingEllipseOfConfidence
-std::string GenerateCodeForCalculatingEllipseOfConfidence(std::string& formula);
-RcppExport SEXP afCEC_GenerateCodeForCalculatingEllipseOfConfidence(SEXP formulaSEXP) {
+// GenerateCodeForCalculatingEllipsesOfConfidence
+std::string GenerateCodeForCalculatingEllipsesOfConfidence(std::string& formula);
+RcppExport SEXP afCEC_GenerateCodeForCalculatingEllipsesOfConfidence(SEXP formulaSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string& >::type formula(formulaSEXP);
-    rcpp_result_gen = Rcpp::wrap(GenerateCodeForCalculatingEllipseOfConfidence(formula));
+    rcpp_result_gen = Rcpp::wrap(GenerateCodeForCalculatingEllipsesOfConfidence(formula));
+    return rcpp_result_gen;
+END_RCPP
+}
+// CalculateEllipsoidsOfConfidenceForQuadraticFunction
+Rcpp::List CalculateEllipsoidsOfConfidenceForQuadraticFunction(Rcpp::List res, double confidence, int gridRes);
+RcppExport SEXP afCEC_CalculateEllipsoidsOfConfidenceForQuadraticFunction(SEXP resSEXP, SEXP confidenceSEXP, SEXP gridResSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::List >::type res(resSEXP);
+    Rcpp::traits::input_parameter< double >::type confidence(confidenceSEXP);
+    Rcpp::traits::input_parameter< int >::type gridRes(gridResSEXP);
+    rcpp_result_gen = Rcpp::wrap(CalculateEllipsoidsOfConfidenceForQuadraticFunction(res, confidence, gridRes));
     return rcpp_result_gen;
 END_RCPP
 }

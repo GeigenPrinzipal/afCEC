@@ -245,14 +245,8 @@ Rcpp::List CalculateEllipsesOfConfidenceForQuadraticFunction(Rcpp::List res, dou
                 points(j, 0) = x;
                 points(j, 1) = y;
                 points(j, (dir + 1) & 1) += m((dir + 1) & 1);
-                vec tmp(1);
-                tmp(0) = points(j, (dir + 1) & 1);
-                double value = 0.0;
-                for (int k = 0; k < (coeffs.n_elem - 1) / 2; ++k) {
-                    value += coeffs(k) * tmp(k) * tmp(k);
-                    value += coeffs(((coeffs.n_elem - 1) / 2) + k) * tmp(k);
-                }
-                value += coeffs(coeffs.n_elem - 1);
+                double tmp = points(j, (dir + 1) & 1);
+                double value = (coeffs(0) * tmp * tmp) + (coeffs(1) * tmp) + coeffs(2);
                 points(j, dir) += value;
             }
             points(segments, 0) = points(0, 0);
@@ -260,14 +254,8 @@ Rcpp::List CalculateEllipsesOfConfidenceForQuadraticFunction(Rcpp::List res, dou
             ellipsesL[i] = points;
             for (int j = 0; j <= segments; ++j) {
                 points(j, (dir + 1) & 1) = -eAxes((dir + 1) & 1) + (((2.0 * eAxes((dir + 1) & 1)) / segments) * j) + m((dir + 1) & 1);
-                vec tmp(1);
-                tmp(0) = points(j, (dir + 1) & 1);
-                double value = 0.0;
-                for (int k = 0; k < (coeffs.n_elem - 1) / 2; ++k) {
-                    value += coeffs(k) * tmp(k) * tmp(k);
-                    value += coeffs(((coeffs.n_elem - 1) / 2) + k) * tmp(k);
-                }
-                value += coeffs(coeffs.n_elem - 1);
+                double tmp = points(j, (dir + 1) & 1);
+                double value = (coeffs(0) * tmp * tmp) + (coeffs(1) * tmp) + coeffs(2);
                 points(j, dir) = value;
             }
             axesL[i] = points;
@@ -282,7 +270,7 @@ Rcpp::List CalculateEllipsesOfConfidenceForQuadraticFunction(Rcpp::List res, dou
 //   -*-   -*-   -*-
 
 // [[Rcpp::export]]
-std::string GenerateCodeForCalculatingEllipseOfConfidence(std::string &formula) {
+std::string GenerateCodeForCalculatingEllipsesOfConfidence(std::string &formula) {
     BuildTokensMaps();
     std::vector<STokenInfo> tokens = Tokenize(formula);
     int pos = 0;
@@ -355,6 +343,218 @@ std::string GenerateCodeForCalculatingEllipseOfConfidence(std::string &formula) 
     ss << "}" << std::endl;
 
     return ss.str();
+}
+
+//   -*-   -*-   -*-
+
+// [[Rcpp::export]]
+Rcpp::List CalculateEllipsoidsOfConfidenceForQuadraticFunction(Rcpp::List res, double confidence, int gridRes) {
+    Rcpp::List covsL = res["covariances"];
+    Rcpp::List mL = res["means"];
+    Rcpp::List dirsL = res["directions"];
+    Rcpp::List coeffsL = res["coefficients"];
+    int maxClusters = covsL.length();
+    Rcpp::List ellipsoidsL(maxClusters);
+    Rcpp::List ellipsoidsNL(maxClusters);
+    Rcpp::List ellipsoidsML(maxClusters);
+    Rcpp::List ellipsoidsMNL(maxClusters);
+    for (int i = 0; i < maxClusters; ++i) {
+        if (covsL[i] != R_NilValue) {
+            vec eigval;
+            mat eigvec;
+            mat cov = covsL[i];
+            eig_sym(eigval, eigvec, cov);
+            double percentile = R::qchisq(confidence, 3, 1, 0);
+            vec eAxes(3);
+            for (int j = 0; j < 3; ++j) eAxes(j) = sqrt(eigval(j) * percentile);
+            vec m = mL[i];
+            int dir = dirsL[i];
+            vec coeffs = coeffsL[i];
+
+            mat verts(2 + ((gridRes - 1) * gridRes), 3);
+            verts(0, 0) = 0.0; verts(0, 1) = 0.0; verts(0, 2) = eAxes(2);
+            for (int j = 1; j < gridRes; ++j) {
+                for (int k = 0; k < gridRes; ++k) {
+                    verts(1 + ((j - 1) * gridRes) + k, 0) = eAxes(0) * sin((M_PI / gridRes) * j) * cos(((2 * M_PI) / gridRes) * k);
+                    verts(1 + ((j - 1) * gridRes) + k, 1) = eAxes(1) * sin((M_PI / gridRes) * j) * sin(((2 * M_PI) / gridRes) * k);
+                    verts(1 + ((j - 1) * gridRes) + k, 2) = eAxes(2) * cos((M_PI / gridRes) * j);
+                }
+            }
+            verts(1 + ((gridRes - 1) * gridRes), 0) = 0.0;
+            verts(1 + ((gridRes - 1) * gridRes), 1) = 0.0;
+            verts(1 + ((gridRes - 1) * gridRes), 2) = -eAxes(2);
+
+            verts = (eigvec * verts.t()).t();
+            for (int j = 0; j < verts.n_rows; ++j) {
+                vec tmp = verts.row(j).t();
+                for (int k = 0; k < 3; ++k) {
+                    if (k != dir) tmp(k) += m(k);
+                }
+                verts.row(j) = tmp.t();
+                tmp.shed_row(dir);
+                double value = (coeffs(0) * tmp(0) * tmp(0)) + (coeffs(1) * tmp(1) * tmp(1)) +
+                    (coeffs(2) * tmp(0)) + (coeffs(3) * tmp(1)) +
+                    coeffs(4);
+                verts(j, dir) += value;
+            }
+
+            umat faces((gridRes * 2) + (((gridRes - 2) * gridRes) * 2), 3);
+            for (int j = 0; j < gridRes; ++j) {
+                faces(j, 0) = 0;
+                faces(j, 1) = 1 + ((j + 1) % gridRes);
+                faces(j, 2) = 1 + j;
+            }
+            for (int j = 0; j < gridRes - 2; ++j) {
+                for (int k = 0; k < gridRes; ++k) {
+                    faces(gridRes + (((j * gridRes) + k) * 2), 0) = 1 + (j * gridRes) + k;
+                    faces(gridRes + (((j * gridRes) + k) * 2), 1) = 1 + (j * gridRes) + ((k + 1) % gridRes);
+                    faces(gridRes + (((j * gridRes) + k) * 2), 2) = 1 + ((j + 1) * gridRes) + ((k + 1) % gridRes);
+                    faces(gridRes + (((j * gridRes) + k) * 2) + 1, 0) = 1 + (j * gridRes) + k;
+                    faces(gridRes + (((j * gridRes) + k) * 2) + 1, 1) = 1 + ((j + 1) * gridRes) + ((k + 1) % gridRes);
+                    faces(gridRes + (((j * gridRes) + k) * 2) + 1, 2) = 1 + ((j + 1) * gridRes) + k;
+                }
+            }
+            for (int j = 0; j < gridRes; ++j) {
+                faces(gridRes + (((gridRes - 2) * gridRes) * 2) + j, 0) = 1 + ((gridRes - 2) * gridRes) + j;
+                faces(gridRes + (((gridRes - 2) * gridRes) * 2) + j, 1) = 1 + ((gridRes - 2) * gridRes) + ((j + 1) % gridRes);
+                faces(gridRes + (((gridRes - 2) * gridRes) * 2) + j, 2) = 1 + ((gridRes - 1) * gridRes);
+            }
+
+            mat fNormals(faces.n_rows, 3);
+            for (int j = 0; j < faces.n_rows; ++j) {
+                unsigned i1 = faces(j, 0);
+                unsigned i2 = faces(j, 1);
+                unsigned i3 = faces(j, 2);
+                vec v1 = verts.row(i1).t();
+                vec v2 = verts.row(i2).t();
+                vec v3 = verts.row(i3).t();
+                vec N = normalise(cross(v2 - v1, v3 - v1));
+                fNormals.row(j) = N.t();
+            }
+
+            mat vNormals(verts.n_rows, 3, fill::zeros);
+            for (int j = 0; j < faces.n_rows; ++j) {
+                unsigned i1 = faces(j, 0);
+                unsigned i2 = faces(j, 1);
+                unsigned i3 = faces(j, 2);
+                vNormals.row(i1) += fNormals.row(j);
+                vNormals.row(i2) += fNormals.row(j);
+                vNormals.row(i3) += fNormals.row(j);
+            }
+
+            for (int j = 0; j < vNormals.n_rows; ++j) vNormals.row(j) = normalise(vNormals.row(j));
+
+            mat eFaces(faces.n_rows * 3, 3);
+            mat eNormals(faces.n_rows * 3, 3);
+            for (int j = 0; j < faces.n_rows; ++j) {
+                unsigned i1 = faces(j, 0);
+                unsigned i2 = faces(j, 1);
+                unsigned i3 = faces(j, 2);
+                eFaces.row(j * 3) = verts.row(i1);
+                eFaces.row((j * 3) + 1) = verts.row(i2);
+                eFaces.row((j * 3) + 2) = verts.row(i3);
+                eNormals.row(j * 3) = vNormals.row(i1);
+                eNormals.row((j * 3) + 1) = vNormals.row(i2);
+                eNormals.row((j * 3) + 2) = vNormals.row(i3);
+            }
+
+            ellipsoidsL[i] = eFaces;
+            ellipsoidsNL[i] = eNormals;
+
+            cov.shed_row(dir);
+            cov.shed_col(dir);
+            eig_sym(eigval, eigvec, cov);
+            for (int j = 0; j < 2; ++j) eAxes(j) = sqrt(eigval(j) * percentile);
+
+            mat vertsM(1 + (gridRes * gridRes), 2);
+            verts(0, 0) = 0.0; verts(0, 1) = 0.0;
+            for (int j = 1; j <= gridRes; ++j) {
+                for (int k = 0; k < gridRes; ++k) {
+                    vertsM(1 + ((j - 1) * gridRes) + k, 0) = ((eAxes(0) / gridRes) * j) * cos(((2 * M_PI) / gridRes) * k);
+                    vertsM(1 + ((j - 1) * gridRes) + k, 1) = ((eAxes(1) / gridRes) * j) * sin(((2 * M_PI) / gridRes) * k);
+                }
+            }
+
+            vertsM = (eigvec * vertsM.t()).t();
+            vertsM.insert_cols(dir, 1, true);
+            for (int j = 0; j < vertsM.n_rows; ++j) {
+                vec tmp = vertsM.row(j).t();
+                for (int k = 0; k < 3; ++k) {
+                    if (k != dir) tmp(k) += m(k);
+                }
+                vertsM.row(j) = tmp.t();
+                tmp.shed_row(dir);
+                double value = (coeffs(0) * tmp(0) * tmp(0)) + (coeffs(1) * tmp(1) * tmp(1)) +
+                    (coeffs(2) * tmp(0)) + (coeffs(3) * tmp(1)) +
+                    coeffs(4);
+                vertsM(j, dir) += value;
+            }
+
+            umat facesM(gridRes + (((gridRes - 1) * gridRes) * 2), 3);
+            for (int j = 0; j < gridRes; ++j) {
+                facesM(j, 0) = 0;
+                facesM(j, 1) = 1 + ((j + 1) % gridRes);
+                facesM(j, 2) = 1 + j;
+            }
+            for (int j = 0; j < gridRes - 1; ++j) {
+                for (int k = 0; k < gridRes; ++k) {
+                    facesM(gridRes + (((j * gridRes) + k) * 2), 0) = 1 + (j * gridRes) + k;
+                    facesM(gridRes + (((j * gridRes) + k) * 2), 1) = 1 + (j * gridRes) + ((k + 1) % gridRes);
+                    facesM(gridRes + (((j * gridRes) + k) * 2), 2) = 1 + ((j + 1) * gridRes) + ((k + 1) % gridRes);
+                    facesM(gridRes + (((j * gridRes) + k) * 2) + 1, 0) = 1 + (j * gridRes) + k;
+                    facesM(gridRes + (((j * gridRes) + k) * 2) + 1, 1) = 1 + ((j + 1) * gridRes) + ((k + 1) % gridRes);
+                    facesM(gridRes + (((j * gridRes) + k) * 2) + 1, 2) = 1 + ((j + 1) * gridRes) + k;
+                }
+            }
+
+            mat fNormalsM(facesM.n_rows, 3);
+            for (int j = 0; j < facesM.n_rows; ++j) {
+                unsigned i1 = facesM(j, 0);
+                unsigned i2 = facesM(j, 1);
+                unsigned i3 = facesM(j, 2);
+                vec v1 = vertsM.row(i1).t();
+                vec v2 = vertsM.row(i2).t();
+                vec v3 = vertsM.row(i3).t();
+                vec N = normalise(cross(v2 - v1, v3 - v1));
+                fNormalsM.row(j) = N.t();
+            };
+
+            mat vNormalsM(vertsM.n_rows, 3, fill::zeros);
+            for (int j = 0; j < facesM.n_rows; ++j) {
+                unsigned i1 = facesM(j, 0);
+                unsigned i2 = facesM(j, 1);
+                unsigned i3 = facesM(j, 2);
+                vNormalsM.row(i1) += fNormalsM.row(j);
+                vNormalsM.row(i2) += fNormalsM.row(j);
+                vNormalsM.row(i3) += fNormalsM.row(j);
+            }
+
+            for (int j = 0; j < vNormalsM.n_rows; ++j) vNormalsM.row(j) = normalise(vNormalsM.row(j));
+
+            mat eMFaces(facesM.n_rows * 3, 3);
+            mat eMNormals(facesM.n_rows * 3, 3);
+            for (int j = 0; j < facesM.n_rows; ++j) {
+                unsigned i1 = facesM(j, 0);
+                unsigned i2 = facesM(j, 1);
+                unsigned i3 = facesM(j, 2);
+                eMFaces.row(j * 3) = vertsM.row(i1);
+                eMFaces.row((j * 3) + 1) = vertsM.row(i2);
+                eMFaces.row((j * 3) + 2) = vertsM.row(i3);
+                eMNormals.row(j * 3) = vNormalsM.row(i1);
+                eMNormals.row((j * 3) + 1) = vNormalsM.row(i2);
+                eMNormals.row((j * 3) + 2) = vNormalsM.row(i3);
+            }
+
+            ellipsoidsML[i] = eMFaces;
+            ellipsoidsMNL[i] = eMNormals;
+        } else {
+            ellipsoidsL[i] = R_NilValue;
+            ellipsoidsNL[i] = R_NilValue;
+            ellipsoidsML[i] = R_NilValue;
+            ellipsoidsMNL[i] = R_NilValue;
+        }
+    }
+    return Rcpp::List::create(ellipsoidsL, ellipsoidsNL, ellipsoidsML, ellipsoidsMNL);
 }
 
 //   -*-   -*-   -*-

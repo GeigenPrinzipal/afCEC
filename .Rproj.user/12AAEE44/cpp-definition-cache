@@ -1148,16 +1148,25 @@
                 "column" : 13,
                 "file" : "C:/Users/Byrski Krzysztof/Documents/afCEC/src/afCEC.cpp",
                 "kind" : 6,
-                "line" : 285,
-                "name" : "GenerateCodeForCalculatingEllipseOfConfidence(std::string &)",
+                "line" : 273,
+                "name" : "GenerateCodeForCalculatingEllipsesOfConfidence(std::string &)",
                 "parent_name" : "",
-                "usr" : "c:@F@GenerateCodeForCalculatingEllipseOfConfidence#&$@N@std@C@basic_string>#C#$@N@std@S@char_traits>#C#$@N@std@C@allocator>#C#"
+                "usr" : "c:@F@GenerateCodeForCalculatingEllipsesOfConfidence#&$@N@std@C@basic_string>#C#$@N@std@S@char_traits>#C#$@N@std@C@allocator>#C#"
+            },
+            {
+                "column" : 12,
+                "file" : "C:/Users/Byrski Krzysztof/Documents/afCEC/src/afCEC.cpp",
+                "kind" : 6,
+                "line" : 351,
+                "name" : "CalculateEllipsoidsOfConfidenceForQuadraticFunction(Rcpp::List, double, int)",
+                "parent_name" : "",
+                "usr" : "c:@F@CalculateEllipsoidsOfConfidenceForQuadraticFunction#$@N@Rcpp@C@Vector>#VI19#@N@Rcpp@CT>1#T@PreserveStorage#d#I#"
             },
             {
                 "column" : 13,
                 "file" : "C:/Users/Byrski Krzysztof/Documents/afCEC/src/afCEC.cpp",
                 "kind" : 6,
-                "line" : 363,
+                "line" : 563,
                 "name" : "GenerateCodeForCalculatingEllipsoidsOfConfidence(std::string &)",
                 "parent_name" : "",
                 "usr" : "c:@F@GenerateCodeForCalculatingEllipsoidsOfConfidence#&$@N@std@C@basic_string>#C#$@N@std@S@char_traits>#C#$@N@std@C@allocator>#C#"
@@ -1166,7 +1175,7 @@
                 "column" : 6,
                 "file" : "C:/Users/Byrski Krzysztof/Documents/afCEC/src/afCEC.cpp",
                 "kind" : 6,
-                "line" : 595,
+                "line" : 795,
                 "name" : "afCECLloyd(const mat &, int, ivec, double, int, int, const mat &, bool)",
                 "parent_name" : "",
                 "usr" : "c:@F@afCECLloyd#&1$@N@arma@C@Mat>#d#I#$@N@arma@C@Col>#I#d#I#I#S0_#b#"
@@ -1175,7 +1184,7 @@
                 "column" : 12,
                 "file" : "C:/Users/Byrski Krzysztof/Documents/afCEC/src/afCEC.cpp",
                 "kind" : 6,
-                "line" : 1074,
+                "line" : 1274,
                 "name" : "afCECHartigan(const mat &, int, ivec, double, int, int, const mat &, bool)",
                 "parent_name" : "",
                 "usr" : "c:@F@afCECHartigan#&1$@N@arma@C@Mat>#d#I#$@N@arma@C@Col>#I#d#I#I#S0_#b#"
@@ -1184,7 +1193,7 @@
                 "column" : 12,
                 "file" : "C:/Users/Byrski Krzysztof/Documents/afCEC/src/afCEC.cpp",
                 "kind" : 6,
-                "line" : 1633,
+                "line" : 1833,
                 "name" : "afCECCppRoutine(const arma::mat &, int, const SEXP &, double, int, int, int, const std::string &, const arma::mat &, bool)",
                 "parent_name" : "",
                 "usr" : "c:@F@afCECCppRoutine#&1$@N@arma@C@Mat>#d#I#&1*$@S@SEXPREC#d#I#I#I#&1$@N@std@C@basic_string>#C#$@N@std@S@char_traits>#C#$@N@std@C@allocator>#C#S0_#b#"
@@ -1193,7 +1202,7 @@
                 "column" : 8,
                 "file" : "C:/Users/Byrski Krzysztof/Documents/afCEC/src/afCEC.cpp",
                 "kind" : 6,
-                "line" : 1816,
+                "line" : 2016,
                 "name" : "RandIndex(std::vector<int>, std::vector<int>, int, int)",
                 "parent_name" : "",
                 "usr" : "c:@F@RandIndex#$@N@std@C@vector>#I#$@N@std@C@allocator>#I#S0_#I#I#"
@@ -1202,13 +1211,13 @@
                 "column" : 8,
                 "file" : "C:/Users/Byrski Krzysztof/Documents/afCEC/src/afCEC.cpp",
                 "kind" : 6,
-                "line" : 1917,
+                "line" : 2117,
                 "name" : "JaccardIndex(std::vector<int>, std::vector<int>, int, int)",
                 "parent_name" : "",
                 "usr" : "c:@F@JaccardIndex#$@N@std@C@vector>#I#$@N@std@C@allocator>#I#S0_#I#I#"
             }
         ],
         "file" : "C:/Users/Byrski Krzysztof/Documents/afCEC/src/afCEC.cpp",
-        "file_last_write" : 1493950739
+        "file_last_write" : 1499811347
     }
 ]
