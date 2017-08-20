@@ -99,7 +99,7 @@ plot.afCEC <- function(
     surfacesHeight2D=1,surfacesColor2D="black",
     XLabel2D="X",YLabel2D="Y",
 
-    pointsAlpha3D=1,pointsSize3D=1,pointsColor3D="cluster",
+    pointsAlpha3D=1,pointsSize3D=0.01,pointsColor3D="cluster",
     meansAlpha3D=0.5,meansSize3D=0.01,meansColor3D="black",
     ellipsoidsAlpha3D=0.25,ellipsoidsColor3D="cluster",
     surfacesAlpha3D=0.5,surfacesColor3D="cluster",

@@ -22,7 +22,7 @@
 #include ".\Parser.h"
 #include ".\Utils.h"
 
-using namespace arma ;
+using namespace arma;
 
 //   -*-   -*-   -*-
 
