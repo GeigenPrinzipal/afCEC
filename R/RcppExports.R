@@ -29,8 +29,8 @@ GenerateCodeForCalculatingEllipsoidsOfConfidence <- function(formula) {
     .Call('afCEC_GenerateCodeForCalculatingEllipsoidsOfConfidence', PACKAGE = 'afCEC', formula)
 }
 
-afCECCppRoutine <- function(points, maxClusters, initialLabels, cardMin, minIterations, maxIterations, numberOfStarts, method, values, interactive) {
-    .Call('afCEC_afCECCppRoutine', PACKAGE = 'afCEC', points, maxClusters, initialLabels, cardMin, minIterations, maxIterations, numberOfStarts, method, values, interactive)
+afCECCppRoutine <- function(points, maxClusters, initialLabels, cardMin, costThreshold, minIterations, maxIterations, numberOfStarts, method, values, interactive) {
+    .Call('afCEC_afCECCppRoutine', PACKAGE = 'afCEC', points, maxClusters, initialLabels, cardMin, costThreshold, minIterations, maxIterations, numberOfStarts, method, values, interactive)
 }
 
 RandIndex <- function(labels1, labels2, maxClusters1, maxClusters2) {

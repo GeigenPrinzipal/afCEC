@@ -1,11 +1,14 @@
 Package: afCEC
 Type: Package
-Title: What the package does (short line)
-Version: 1.0
-Date: 2015-02-25
-Author: Your Name
-Maintainer: Your Name <your@email.com>
-Description: More about what it does (maybe more than one line)
+Title: Active function Cross-Entropy Clustering
+Version: 1.0.0
+Date: 2017-09-21
+Author: Krzysztof Byrski [aut, cre], Przemysław Spurek [ctb]
+Maintainer: Krzysztof Byrski <krzysiek.byrski@uj.edu.pl>
+Description: Active Function Cross-Entropy Clustering (afCEC) partitions the n-dimensional data into the clusters by finding the parameters of the mixed generalized multivariate normal distribution, that optimally approximates the scattering of the data in the n-dimensional space, whose density function is of the form: p_1*N(mi_1,^sigma_1,sigma_1,f_1)+...+p_k*N(mi_k,^sigma_k,sigma_k,f_k). The above-mentioned generalization is performed by introducing so called "f-adapted gaussian densities" (i.e. the ordinary gaussian densities adapted by the "active function"). Additionally, the Active Function Cross-Entropy Clustering performs the automatic reduction of the unnecessary clusters.
+URL: https://github.com/GeigenPrinzipal/afCEC
+Encoding: UTF-8
+NeedsCompilation: yes
 License: GPL (>= 2)
 Imports: Rcpp (>= 0.11.3), RcppArmadillo, rgl
 LinkingTo: Rcpp, RcppArmadillo, rgl

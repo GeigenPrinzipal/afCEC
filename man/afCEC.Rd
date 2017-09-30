@@ -148,7 +148,6 @@ Indicates if the algorithm runs in the "interactive" mode. The "interactive" mod
 }
 
 \seealso{
-\code{\link[=UserDefinedFormulas]{User-defined formulas}}\cr
 \code{\link{plot}}
 }
 

@@ -140,6 +140,79 @@ Determines the label on the X axis of the chart drawn by the plot function. The 
 Determines the label on the Y axis of the chart drawn by the plot function. The argument is used only in the case of the 2D data. The default value is "Y".
 }
 
+\item{pointsAlpha3D}{
+Determines the opacity of the points drawn in the plot function. The argument is used only in the case of the 3D data. The default value is 1.
+}
+
+\item{pointsSize3D}{
+Determines the size of the points drawn in the plot function. The size is expressed as the fraction of the maximal extent of the bounding box containing the whole of the data points. The argument is used only in the case of the 3D data. The default value is 0.01.
+}
+
+\item{pointsColor3D}{
+Determines the color of the points drawn in the plot function. It can hold the following values:
+\itemize{
+\item{Any color format acceptable by the standard R plot function. In that case the color is fixed across the particular clusters.}
+\item{The "cluster" string indicating, that the plot function will use unique colors for points belonging to the different clusters.}
+}
+The argument is used only in the case of the 3D data. The default value is "cluster".
+}
+
+\item{meansAlpha3D}{
+Determines the opacity of the means drawn in the plot function. The argument is used only in the case of the 3D data. The default value is 0.5.
+}
+
+\item{meansSize3D}{
+Determines the size of the means drawn in the plot function. The size is expressed as the fraction of the maximal extent of the bounding box containing the whole of the data points. The argument is used only in the case of the 3D data. The default value is 0.01.
+}
+
+\item{meansColor3D}{
+Determines the color of the means drawn in the plot function. It can hold the following values:
+\itemize{
+\item{Any color format acceptable by the standard R plot function. In that case the color is fixed across the particular clusters.}
+\item{The "cluster" string indicating, that the plot function will use unique colors for points belonging to the different clusters.}
+}
+The argument is used only in the case of the 3D data. The default value is "black".
+}
+
+\item{ellipsoidsAlpha3D}{
+Determines the opacity of the ellipsoids drawn in the plot function. The argument is used only in the case of the 3D data. The default value is 0.25.
+}
+
+\item{ellipsoidsColor3D}{
+Determines the color of the ellipsoids drawn in the plot function. It can hold the following values:
+\itemize{
+\item{Any color format acceptable by the standard R plot function. In that case the color is fixed across the particular clusters.}
+\item{The "cluster" string indicating, that the plot function will use unique colors for ellipses of confidence of the different clusters.}
+}
+The argument is used only in the case of the 3D data. The default value is "cluster".
+}
+
+\item{surfacesAlpha3D}{
+Determines the opacity of the surfaces drawn in the plot function. The argument is used only in the case of the 3D data. The default value is 0.5.
+}
+
+\item{surfacesColor3D}{
+Determines the color of the surfaces drawn in the plot function. It can hold the following values:
+\itemize{
+\item{Any color format acceptable by the standard R plot function. In that case the color is fixed across the particular clusters.}
+\item{The "cluster" string indicating, that the plot function will use unique colors for ellipses of confidence of the different clusters.}
+}
+The argument is used only in the case of the 3D data. The default value is "cluster".
+}
+
+
+\item{XLabel3D}{
+Determines the label on the X axis of the chart drawn by the plot function. The argument is used only in the case of the 3D data. The default value is "X".
+}
+
+\item{YLabel3D}{
+Determines the label on the Y axis of the chart drawn by the plot function. The argument is used only in the case of the 3D data. The default value is "Y".
+}
+
+\item{ZLabel3D}{
+Determines the label on the Y axis of the chart drawn by the plot function. The argument is used only in the case of the 3D data. The default value is "Z".
+}
+
 }
 
 \value{

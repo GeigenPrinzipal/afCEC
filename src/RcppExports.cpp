@@ -87,8 +87,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // afCECCppRoutine
-Rcpp::List afCECCppRoutine(const arma::mat& points, int maxClusters, const SEXP& initialLabels, double cardMin, int minIterations, int maxIterations, int numberOfStarts, const std::string& method, const arma::mat& values, bool interactive);
-RcppExport SEXP afCEC_afCECCppRoutine(SEXP pointsSEXP, SEXP maxClustersSEXP, SEXP initialLabelsSEXP, SEXP cardMinSEXP, SEXP minIterationsSEXP, SEXP maxIterationsSEXP, SEXP numberOfStartsSEXP, SEXP methodSEXP, SEXP valuesSEXP, SEXP interactiveSEXP) {
+Rcpp::List afCECCppRoutine(const arma::mat& points, int maxClusters, const SEXP& initialLabels, double cardMin, double costThreshold, int minIterations, int maxIterations, int numberOfStarts, const std::string& method, const arma::mat& values, bool interactive);
+RcppExport SEXP afCEC_afCECCppRoutine(SEXP pointsSEXP, SEXP maxClustersSEXP, SEXP initialLabelsSEXP, SEXP cardMinSEXP, SEXP costThresholdSEXP, SEXP minIterationsSEXP, SEXP maxIterationsSEXP, SEXP numberOfStartsSEXP, SEXP methodSEXP, SEXP valuesSEXP, SEXP interactiveSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -96,13 +96,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type maxClusters(maxClustersSEXP);
     Rcpp::traits::input_parameter< const SEXP& >::type initialLabels(initialLabelsSEXP);
     Rcpp::traits::input_parameter< double >::type cardMin(cardMinSEXP);
+    Rcpp::traits::input_parameter< double >::type costThreshold(costThresholdSEXP);
     Rcpp::traits::input_parameter< int >::type minIterations(minIterationsSEXP);
     Rcpp::traits::input_parameter< int >::type maxIterations(maxIterationsSEXP);
     Rcpp::traits::input_parameter< int >::type numberOfStarts(numberOfStartsSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type method(methodSEXP);
     Rcpp::traits::input_parameter< const arma::mat& >::type values(valuesSEXP);
     Rcpp::traits::input_parameter< bool >::type interactive(interactiveSEXP);
-    rcpp_result_gen = Rcpp::wrap(afCECCppRoutine(points, maxClusters, initialLabels, cardMin, minIterations, maxIterations, numberOfStarts, method, values, interactive));
+    rcpp_result_gen = Rcpp::wrap(afCECCppRoutine(points, maxClusters, initialLabels, cardMin, costThreshold, minIterations, maxIterations, numberOfStarts, method, values, interactive));
     return rcpp_result_gen;
 END_RCPP
 }

@@ -797,6 +797,7 @@ SEXP afCECLloyd(
     int maxClusters,
     ivec labels,
     double cardMin,
+    double costThreshold,
     int minIterations,
     int maxIterations,
     const mat &values,
@@ -938,8 +939,6 @@ SEXP afCECLloyd(
     //   -*-   -*-   -*-
 
     for (std::set<int>::iterator it1 = inactiveClusters.begin(); it1 != inactiveClusters.end(); ++it1) {
-        printf("WYWALANIE Z KLASTRA: %d\n", *it1); // !!!
-
         for (int i = 0; i < pointsNum; ++i) {
             int cl = labels[i];
             if (*it1 == cl) {
@@ -1044,7 +1043,6 @@ SEXP afCECLloyd(
     double ETotalOld;
     double ETotalNew = 0.0;
     for (std::set<int>::iterator it = activeClusters.begin(); it != activeClusters.end(); ++it) ETotalNew += E[*it];
-    double dETotalThreshold = 0.0;//0.0001; // !!!
     int numberOfIterations = 0;
     do {
         ETotalOld = ETotalNew;
@@ -1079,8 +1077,6 @@ SEXP afCECLloyd(
 
         // !!! REMOVAL !!!
         for (std::set<int>::iterator it1 = inactiveClusters.begin(); it1 != inactiveClusters.end(); ++it1) {
-            printf("WYWALANIE Z KLASTRA: %d\n", *it1); // !!!
-
             for (int i = 0; i < pointsNum; ++i) {
                 int cl = labels[i];
                 if (*it1 == cl) {
@@ -1192,8 +1188,6 @@ SEXP afCECLloyd(
         for (std::set<int>::iterator it = activeClusters.begin(); it != activeClusters.end(); ++it) ETotalNew += E[*it];
         if (!is_finite(ETotalNew)) throw "A numerical overflow occurred.";
 
-        //printf("%d | %d: %.10lf\n", activeClusters.size(), numberOfIterations + 1, ETotalNew); // !!!
-
         if (interactive) {
             Rcpp::List cardL(maxClusters);
             Rcpp::List mL(maxClusters);
@@ -1228,9 +1222,7 @@ SEXP afCECLloyd(
         }
 
         ++numberOfIterations;
-    } while ((numberOfIterations < minIterations) || ((numberOfIterations < maxIterations) && (ETotalNew - ETotalOld < dETotalThreshold)));
-
-    if (numberOfIterations < 2) printf("YABADABADOO!\n"); // !!!
+    } while ((numberOfIterations < minIterations) || ((numberOfIterations < maxIterations) && (ETotalNew - ETotalOld < costThreshold)));
 
     //   -*-   -*-   -*-
 
@@ -1276,6 +1268,7 @@ Rcpp::List afCECHartigan (
     int maxClusters,
     ivec labels,
     double cardMin,
+    double costThreshold,
     int minIterations,
     int maxIterations,
     const mat &values,
@@ -1421,17 +1414,12 @@ Rcpp::List afCECHartigan (
             *coeffs[*it] = bestCoeff;
             variances[*it] = bestVar;
             ++it;
-        } catch (mat &m) {
-            printf("VERY BAD CLUSTER!\n");
-            throw m;
         } catch (...) {
             std::set<int>::iterator itTmp = it;
             ++itTmp;
             inactiveClusters.insert(*it);
             activeClusters.erase(it);
             it = itTmp;
-
-            printf("JADZIA!\n");
         }
     }
 
@@ -1440,8 +1428,6 @@ Rcpp::List afCECHartigan (
     double ETotalOld;
     double ETotalNew = 0.0; // !!! !!! !!!
     for (std::set<int>::iterator it = activeClusters.begin(); it != activeClusters.end(); ++it) ETotalNew += E[*it];
-    //printf("%lf\n", ETotalNew); // !!!
-    double dETotalThreshold = 0.0;//0.0001; // !!!
     int numberOfIterations = 0;
     do {
         ETotalOld = ETotalNew;
@@ -1520,16 +1506,13 @@ Rcpp::List afCECHartigan (
                                 vec x = solve(trimatu(ALTmp.t()), y);
                                 mat ATmp = *A[*it][j] + (vA * vA.t());
                                 double var = sumOfSquares[*it][j] + (points.at(j, i) * points.at(j, i));
-                                if (var < 0.0) {
-                                    printf("%lf - AMIGA !!! !!! !!!\n", var);
-                                }
                                 var -= ((vec)(2.0 * x.t() * bTmp))[0];
                                 var += ((mat)(x.t() * ATmp * x)).at(0, 0);
                                 var /= (card[*it] + 1);
 
                                 double prob = (card[*it] + 1.0) / pointsNum;
                                 double EIncl = prob * (-log(prob) + (0.5 * ((dim * log(2.0 * M_PI * M_E)) + log(det * det * var))));
-                                if (!is_finite(EIncl)) throw "A numerical overflow occurred. BABA JAGA";
+                                if (!is_finite(EIncl)) throw "A numerical overflow occurred.";
                                 if (EIncl - E[*it] < dEMinIncl) {
                                     dEMinIncl = EIncl - E[*it];
                                     bestClIncl = *it;
@@ -1594,8 +1577,6 @@ Rcpp::List afCECHartigan (
                             inactiveClusters.insert(cl);
                             activeClusters.erase(cl);
                         }
-                    } else {
-                        //printf("BO: %.25lf\n", dEMinExcl + dEMinIncl);
                     }
                 }
             }
@@ -1603,8 +1584,6 @@ Rcpp::List afCECHartigan (
             //   -*-   -*-   -*-
 
             for (std::set<int>::iterator it1 = inactiveClusters.begin(); it1 != inactiveClusters.end(); ++it1) {
-                printf("WYWALANIE Z KLASTRA: %d\n", *it1); // !!!
-
                 for (int j = 0; j < pointsNum; ++j) {
                     int cl = labels[j];
                     if (*it1 == cl) {
@@ -1640,7 +1619,7 @@ Rcpp::List afCECHartigan (
 
                                 double prob = (card[*it2] + 1.0) / pointsNum;
                                 double EIncl = prob * (-log(prob) + (0.5 * ((dim * log(2.0 * M_PI * M_E)) + log(det * det * var))));
-                                if (!is_finite(EIncl)) throw "A numerical overflow occurred. JAJCO!";
+                                if (!is_finite(EIncl)) throw "A numerical overflow occurred.";
                                 if (EIncl - E[*it2] < dEMinIncl) {
                                     dEMinIncl = EIncl - E[*it2];
                                     bestClIncl = *it2;
@@ -1687,8 +1666,6 @@ Rcpp::List afCECHartigan (
         ETotalNew = 0.0;
         for (std::set<int>::iterator it = activeClusters.begin(); it != activeClusters.end(); ++it) ETotalNew += E[*it];
         if (!is_finite(ETotalNew)) throw "A numerical overflow occurred.";
-
-        printf("%d: %.10lf\n", numberOfIterations, ETotalNew); // !!!
 
         if (interactive) {
             Rcpp::List cardL(maxClusters);
@@ -1755,9 +1732,7 @@ Rcpp::List afCECHartigan (
         }
 
         ++numberOfIterations;
-    } while ((numberOfIterations < minIterations) || ((numberOfIterations < maxIterations) && (ETotalNew - ETotalOld < dETotalThreshold)));
-
-    if (numberOfIterations < 2) printf("YABADABADOO!\n"); // !!!
+    } while ((numberOfIterations < minIterations) || ((numberOfIterations < maxIterations) && (ETotalNew - ETotalOld < costThreshold)));
 
     //   -*-   -*-   -*-
 
@@ -1835,6 +1810,7 @@ Rcpp::List afCECCppRoutine (
     int maxClusters,
     const SEXP &initialLabels,
     double cardMin,
+    double costThreshold,
     int minIterations,
     int maxIterations,
     int numberOfStarts,
@@ -1964,9 +1940,9 @@ Rcpp::List afCECCppRoutine (
                 }
             }
             Rcpp::List res;
-            if (method == "Lloyd") res = afCECLloyd(points, maxClusters, labels, cardMin, minIterations, maxIterations, values, interactive);
+            if (method == "Lloyd") res = afCECLloyd(points, maxClusters, labels, cardMin, costThreshold, minIterations, maxIterations, values, interactive);
             else {
-                res = afCECHartigan(points, maxClusters, labels, cardMin, minIterations, maxIterations, values, interactive);
+                res = afCECHartigan(points, maxClusters, labels, costThreshold, cardMin, minIterations, maxIterations, values, interactive);
 
                 //CafCECHartigan afCECHartigan(points, maxClusters, labels, cardMin, minIterations, maxIterations, 0.0, values, interactive);
                 //res = afCECHartigan.res;
@@ -1974,7 +1950,6 @@ Rcpp::List afCECCppRoutine (
             if (res.length() > 0) {
                 if (!interactive) {
                     double E = res["cost_total"];
-                    printf(":::::::: %lf\n", E); // !!!
                     if (E < EMin) {
                         EMin = E;
                         bestRes = res;
@@ -1982,15 +1957,12 @@ Rcpp::List afCECCppRoutine (
                 } else {
                     Rcpp::List tmp = res[res.length() - 1];
                     double E = tmp["cost_total"];
-                    printf(":::::::: %lf\n", E); // !!!
                     if (E < EMin) {
                         EMin = E;
                         bestRes = res;
                     }
                 }
             }
-        } catch (mat &m) {
-            if (!bestRes.containsElementNamed("badCl")) bestRes["badCl"] = m;
         } catch (std::bad_alloc &e) {
             if (printErrorMessages) printf("(Start %d): Not enough memory.\n", i);
         } catch (const char *e) {
@@ -2106,8 +2078,6 @@ double RandIndex(std::vector<int> labels1, std::vector<int> labels2, int maxClus
     delete[] classesOccurrence;
     delete[] classesCard;
 
-    printf("%I64d %I64d\n", TP, TN); // !!!
-
     return ((double)(TP + TN)) / ((((long long)n) * (n - 1)) / 2);
 }
 
@@ -2206,8 +2176,6 @@ double JaccardIndex(std::vector<int> labels1, std::vector<int> labels2, int maxC
     delete[] classesInvMap;
     delete[] classesOccurrence;
     delete[] classesCard;
-
-    printf("%I64d %I64d\n", TP, TN); // !!!
 
     return ((double)TP) / (((((long long)n) * (n - 1)) / 2) - TN);
 }
