@@ -18,7 +18,7 @@ The above-mentioned generalization is performed by introducing so called "f-adap
 Package: \tab afCEC\cr
 Type: \tab Package\cr
 Version: \tab 1.0.0\cr
-Date: \tab 2017-21-09\cr
+Date: \tab 2017-12-11\cr
 License: \tab GPL (>= 2) \cr
 }
 }

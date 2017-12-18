@@ -1,40 +1,8 @@
 #define ARMA_DONT_PRINT_ERRORS
 #include <RcppArmadillo.h>
 // [[Rcpp::depends(RcppArmadillo)]]
-#include <iostream>
-#include <stdio.h>
-#include <stdlib.h>
-#include <mem.h>
-#include <string>
-#include <string.h>
-#include <math.h>
-#include <set>
-#include <map>
-#include <sstream>
-#include <cctype>
-#include <list>
-#include <vector>
-#include <stack>
-#include <deque>
-#include <fstream>
-
-#include ".\CafCECHartigan.h"
-#include ".\Parser.h"
-#include ".\Utils.h"
 
 using namespace arma;
-
-//   -*-   -*-   -*-
-
-bool printErrorMessages = true;
-
-void DisableErrorMessages() {
-    printErrorMessages = false;
-}
-
-void EnableErrorMessages() {
-    printErrorMessages = true;
-}
 
 //   -*-   -*-   -*-
 
@@ -51,7 +19,7 @@ int RandomInteger() {
 }
 
 float RandomFloat() {
-    float tmp;
+    float tmp = 0.0f;
     *((unsigned *)&tmp) = (seed & 8388607) | 1065353216;
     seed = (1664525 * seed) + 1013904223;
     return tmp - 1.0f;
@@ -59,7 +27,7 @@ float RandomFloat() {
 
 //   -*-   -*-   -*-
 
-/*bool CholeskyRankOneUpdate(mat &L, vec &v) {
+bool CholeskyRankOneUpdate(mat &L, vec v) {
     double *vPtr = v.memptr();
     for (int i = 0; i < L.n_rows; ++i) {
         double *LPtr = L.colptr(i);
@@ -75,11 +43,11 @@ float RandomFloat() {
         }
     }
     return true;
-}*/
+}
 
 //   -*-   -*-   -*-
 
-/*bool CholeskyRankOneDowndate(mat &L, vec &v) {
+bool CholeskyRankOneDowndate(mat &L, vec v) {
     double *vPtr = v.memptr();
     for (int i = 0; i < L.n_rows; ++i) {
         double *LPtr = L.colptr(i);
@@ -95,49 +63,6 @@ float RandomFloat() {
         }
     }
     return true;
-}*/
-
-//   -*-   -*-   -*-
-
-// [[Rcpp::export]]
-std::string GenerateCodeForArrayConstruction(std::string &formula) {
-    BuildTokensMaps();
-    std::vector<STokenInfo> tokens = Tokenize(formula);
-    int pos = 0;
-    aVarInd = 0;
-    std::string code;
-    int varRes; // !!!
-    ParseBody(tokens, pos, code, varRes);
-    std::stringstream ss;
-
-    ss << "#include <RcppArmadillo.h>" << std::endl;
-    ss << "// [[Rcpp::depends(RcppArmadillo)]]" << std::endl;
-    ss << std::endl;
-    ss << "using namespace arma;" << std::endl;
-    ss << std::endl;
-    ss << code;
-    ss << std::endl;
-    ss << "// [[Rcpp::export]]" << std::endl;
-    ss << "arma::mat CalculateArrayOfValues(arma::mat &points) {" << std::endl;
-    ss << "    int pointsNum = points.n_cols;" << std::endl;
-    ss << "    int dim = points.n_rows;" << std::endl;
-    ss << "    vec tmp(dim);" << std::endl;
-    ss << std::endl;
-    ss << "    vec foo = f(tmp.submat(0, 0, dim - 2, 0)); // !!!" << std::endl;
-    ss << "    int numberOfComponents = foo.n_rows; // !!!" << std::endl;
-    ss << std::endl;
-    ss << "    mat values(dim * numberOfComponents, pointsNum);" << std::endl;
-    ss << "    for (int i = 0; i < pointsNum; ++i) {" << std::endl;
-    ss << "        tmp.submat(0, 0, dim - 2, 0) = points.submat(1, i, dim - 1, i);" << std::endl;
-    ss << "        for (int j = 0; j < dim; ++j) {" << std::endl;
-    ss << "            values.submat(j * numberOfComponents, i, ((j + 1) * numberOfComponents) - 1, i) = f(tmp.submat(0, 0, dim - 2, 0));" << std::endl;
-    ss << "            tmp(j) = points(j, i);" << std::endl;
-    ss << "        }" << std::endl;
-    ss << "    }" << std::endl;
-    ss << "    return values;" << std::endl;
-    ss << "}" << std::endl;
-
-    return ss.str();
 }
 
 //   -*-   -*-   -*-
@@ -167,53 +92,6 @@ void UpdateMeansForQuadraticFunction(Rcpp::List &res) {
         }
     }
     res["means"] = mL;
-}
-
-//   -*-   -*-   -*-
-
-// [[Rcpp::export]]
-std::string GenerateCodeForUpdatingMeans(std::string &formula) {
-    BuildTokensMaps();
-    std::vector<STokenInfo> tokens = Tokenize(formula);
-    int pos = 0;
-    aVarInd = 0;
-    std::string code;
-    int varRes; // !!!
-    ParseBody(tokens, pos, code, varRes);
-    std::stringstream ss;
-
-    ss << "#include <RcppArmadillo.h>" << std::endl;
-    ss << "// [[Rcpp::depends(RcppArmadillo)]]" << std::endl;
-    ss << std::endl;
-    ss << "using namespace arma;" << std::endl;
-    ss << std::endl;
-    ss << code;
-    ss << std::endl;
-    ss << "// [[Rcpp::export]]" << std::endl;
-    ss << "void UpdateMeans(Rcpp::List &res) {" << std::endl;
-    ss << "    Rcpp::List mL = res[\"means\"];" << std::endl;
-    ss << "    Rcpp::List dirsL = res[\"directions\"];" << std::endl;
-    ss << "    Rcpp::List coeffsL = res[\"coefficients\"];" << std::endl;
-    ss << "    int maxClusters = mL.length();" << std::endl;
-    ss << "    for (int i = 0; i < maxClusters; ++i) {" << std::endl;
-    ss << "        if (mL[i] != R_NilValue) {" << std::endl;
-    ss << "            vec m = mL[i];" << std::endl;
-    ss << "            int dir = dirsL[i];" << std::endl;
-    ss << "            vec coeffs = coeffsL[i];" << std::endl;
-    ss << "            vec tmp(m.n_elem - 1);" << std::endl;
-    ss << "            if (dir > 0) tmp.subvec(0, dir - 1) = m.subvec(0, dir - 1);" << std::endl;
-    ss << "            if (dir < m.n_elem - 1) tmp.subvec(dir, m.n_elem - 2) = m.subvec(dir + 1, m.n_elem - 1);" << std::endl;
-    ss << "            vec values = f(tmp);" << std::endl;
-    ss << "            double value = 0.0;" << std::endl;
-    ss << "            for (int k = 0; k < coeffs.n_elem; ++k) value += coeffs(k) * values(k);" << std::endl;
-    ss << "            m[dir] = value;" << std::endl;
-    ss << "            mL[i] = m;" << std::endl;
-    ss << "        }" << std::endl;
-    ss << "    }" << std::endl;
-    ss << "    res[\"means\"] = mL;" << std::endl;
-    ss << "}" << std::endl;
-
-    return ss.str();
 }
 
 //   -*-   -*-   -*-
@@ -265,84 +143,6 @@ Rcpp::List CalculateEllipsesOfConfidenceForQuadraticFunction(Rcpp::List res, dou
         }
     };
     return Rcpp::List::create(ellipsesL, axesL);
-}
-
-//   -*-   -*-   -*-
-
-// [[Rcpp::export]]
-std::string GenerateCodeForCalculatingEllipsesOfConfidence(std::string &formula) {
-    BuildTokensMaps();
-    std::vector<STokenInfo> tokens = Tokenize(formula);
-    int pos = 0;
-    aVarInd = 0;
-    std::string code;
-    int varRes; // !!!
-    ParseBody(tokens, pos, code, varRes);
-    std::stringstream ss;
-
-    ss << "#include <RcppArmadillo.h>" << std::endl;
-    ss << "// [[Rcpp::depends(RcppArmadillo)]]" << std::endl;
-    ss << std::endl;
-    ss << "using namespace arma;" << std::endl;
-    ss << std::endl;
-    ss << code;
-    ss << std::endl;
-    ss << "// [[Rcpp::export]]" << std::endl;
-    ss << "Rcpp::List CalculateEllipsesOfConfidence(Rcpp::List res, double confidence, int segments) {" << std::endl;
-    ss << "    Rcpp::List covsL = res[\"covariances\"];" << std::endl;
-    ss << "    Rcpp::List mL = res[\"means\"];" << std::endl;
-    ss << "    Rcpp::List dirsL = res[\"directions\"];" << std::endl;
-    ss << "    Rcpp::List coeffsL = res[\"coefficients\"];" << std::endl;
-    ss << "    int maxClusters = covsL.length();" << std::endl;
-    ss << "    Rcpp::List ellipsesL(maxClusters);" << std::endl;
-    ss << "    Rcpp::List axesL(maxClusters);" << std::endl;
-    ss << "    for (int i = 0; i < maxClusters; ++i) {" << std::endl;
-    ss << "        if (covsL[i] != R_NilValue) {" << std::endl;
-    ss << "            mat cov = covsL[i];" << std::endl;
-    ss << "            vec m = mL[i];" << std::endl;
-    ss << "            int dir = dirsL[i];" << std::endl;
-    ss << "            vec coeffs = coeffsL[i];" << std::endl;
-    ss << "            mat points(segments + 1, 2);" << std::endl;
-    ss << "            double lambda1 = cov(0, 0);" << std::endl;
-    ss << "            double lambda2 = cov(1, 1);" << std::endl;
-    ss << "            vec eAxes(2);" << std::endl;
-    ss << "            eAxes(0) = sqrt(lambda1 * R::qchisq(confidence, 2, 1, 0));" << std::endl;
-    ss << "            eAxes(1) = sqrt(lambda2 * R::qchisq(confidence, 2, 1, 0));" << std::endl;
-    ss << "            for (int j = 0; j < segments; ++j) {" << std::endl;
-    ss << "                double x = eAxes(0) * cos(((2.0 * M_PI) / segments) * j);" << std::endl;
-    ss << "                double y = eAxes(1) * sin(((2.0 * M_PI) / segments) * j);" << std::endl;
-    ss << "                points(j, 0) = x;" << std::endl;
-    ss << "                points(j, 1) = y;" << std::endl;
-    ss << "                points(j, (dir + 1) & 1) += m((dir + 1) & 1);" << std::endl;
-    ss << "                vec tmp(1);" << std::endl;
-    ss << "                tmp(0) = points(j, (dir + 1) & 1);" << std::endl;
-    ss << "                vec values = f(tmp);" << std::endl;
-    ss << "                double value = 0.0;" << std::endl;
-    ss << "                for (int k = 0; k < coeffs.n_elem; ++k) value += coeffs(k) * values(k);" << std::endl;
-    ss << "                points(j, dir) += value;" << std::endl;
-    ss << "            }" << std::endl;
-    ss << "            points(segments, 0) = points(0, 0);" << std::endl;
-    ss << "            points(segments, 1) = points(0, 1);" << std::endl;
-    ss << "            ellipsesL[i] = points;" << std::endl;
-    ss << "            for (int j = 0; j <= segments; ++j) {" << std::endl;
-    ss << "                points(j, (dir + 1) & 1) = -eAxes((dir + 1) & 1) + (((2.0 * eAxes((dir + 1) & 1)) / segments) * j) + m((dir + 1) & 1);" << std::endl;
-    ss << "                vec tmp(1);" << std::endl;
-    ss << "                tmp(0) = points(j, (dir + 1) & 1);" << std::endl;
-    ss << "                vec values = f(tmp);" << std::endl;
-    ss << "                double value = 0.0;" << std::endl;
-    ss << "                for (int k = 0; k < coeffs.n_elem; ++k) value += coeffs(k) * values(k);" << std::endl;
-    ss << "                points(j, dir) = value;" << std::endl;
-    ss << "            }" << std::endl;
-    ss << "            axesL[i] = points;" << std::endl;
-    ss << "        } else {" << std::endl;
-    ss << "            ellipsesL[i] = R_NilValue;" << std::endl;
-    ss << "            axesL[i] = R_NilValue;" << std::endl;
-    ss << "        }" << std::endl;
-    ss << "    }" << std::endl;
-    ss << "    return Rcpp::List::create(ellipsesL, axesL);" << std::endl;
-    ss << "}" << std::endl;
-
-    return ss.str();
 }
 
 //   -*-   -*-   -*-
@@ -555,239 +355,6 @@ Rcpp::List CalculateEllipsoidsOfConfidenceForQuadraticFunction(Rcpp::List res, d
         }
     }
     return Rcpp::List::create(ellipsoidsL, ellipsoidsNL, ellipsoidsML, ellipsoidsMNL);
-}
-
-//   -*-   -*-   -*-
-
-// [[Rcpp::export]]
-std::string GenerateCodeForCalculatingEllipsoidsOfConfidence(std::string &formula) {
-    BuildTokensMaps();
-    std::vector<STokenInfo> tokens = Tokenize(formula);
-    int pos = 0;
-    aVarInd = 0;
-    std::string code;
-    int varRes; // !!!
-    ParseBody(tokens, pos, code, varRes);
-    std::stringstream ss;
-
-    ss << "#include <RcppArmadillo.h>" << std::endl;
-    ss << "// [[Rcpp::depends(RcppArmadillo)]]" << std::endl;
-    ss << std::endl;
-    ss << "using namespace arma;" << std::endl;
-    ss << std::endl;
-    ss << code;
-    ss << std::endl;
-    ss << "// [[Rcpp::export]]" << std::endl;
-    ss << "Rcpp::List CalculateEllipsoidsOfConfidence(Rcpp::List res, double confidence, int gridRes) {" << std::endl;
-    ss << "    Rcpp::List covsL = res[\"covariances\"];" << std::endl;
-    ss << "    Rcpp::List mL = res[\"means\"];" << std::endl;
-    ss << "    Rcpp::List dirsL = res[\"directions\"];" << std::endl;
-    ss << "    Rcpp::List coeffsL = res[\"coefficients\"];" << std::endl;
-    ss << "    int maxClusters = covsL.length();" << std::endl;
-    ss << "    Rcpp::List ellipsoidsL(maxClusters);" << std::endl;
-    ss << "    Rcpp::List ellipsoidsNL(maxClusters);" << std::endl;
-    ss << "    Rcpp::List ellipsoidsML(maxClusters);" << std::endl;
-    ss << "    Rcpp::List ellipsoidsMNL(maxClusters);" << std::endl;
-    ss << "    for (int i = 0; i < maxClusters; ++i) {" << std::endl;
-    ss << "        if (covsL[i] != R_NilValue) {" << std::endl;
-    ss << "            vec eigval;" << std::endl;
-    ss << "            mat eigvec;" << std::endl;
-    ss << "            mat cov = covsL[i];" << std::endl;
-    ss << "            eig_sym(eigval, eigvec, cov);" << std::endl;
-    ss << "            double percentile = R::qchisq(confidence, 3, 1, 0);" << std::endl;
-    ss << "            vec eAxes(3);" << std::endl;
-    ss << "            for (int j = 0; j < 3; ++j) eAxes(j) = sqrt(eigval(j) * percentile);" << std::endl;
-    ss << "            vec m = mL[i];" << std::endl;
-    ss << "            int dir = dirsL[i];" << std::endl;
-    ss << "            vec coeffs = coeffsL[i];" << std::endl;
-    ss << std::endl;
-    ss << "            mat verts(2 + ((gridRes - 1) * gridRes), 3);" << std::endl;
-    ss << "            verts(0, 0) = 0.0; verts(0, 1) = 0.0; verts(0, 2) = eAxes(2);" << std::endl;
-    ss << "            for (int j = 1; j < gridRes; ++j) {" << std::endl;
-    ss << "                for (int k = 0; k < gridRes; ++k) {" << std::endl;
-    ss << "                    verts(1 + ((j - 1) * gridRes) + k, 0) = eAxes(0) * sin((M_PI / gridRes) * j) * cos(((2 * M_PI) / gridRes) * k);" << std::endl;
-    ss << "                    verts(1 + ((j - 1) * gridRes) + k, 1) = eAxes(1) * sin((M_PI / gridRes) * j) * sin(((2 * M_PI) / gridRes) * k);" << std::endl;
-    ss << "                    verts(1 + ((j - 1) * gridRes) + k, 2) = eAxes(2) * cos((M_PI / gridRes) * j);" << std::endl;
-    ss << "                }" << std::endl;
-    ss << "            }" << std::endl;
-    ss << "            verts(1 + ((gridRes - 1) * gridRes), 0) = 0.0;" << std::endl;
-    ss << "            verts(1 + ((gridRes - 1) * gridRes), 1) = 0.0;" << std::endl;
-    ss << "            verts(1 + ((gridRes - 1) * gridRes), 2) = -eAxes(2);" << std::endl;
-    ss << std::endl;
-    ss << "            verts = (eigvec * verts.t()).t();" << std::endl;
-    ss << "            for (int j = 0; j < verts.n_rows; ++j) {" << std::endl;
-    ss << "                vec tmp = verts.row(j).t();" << std::endl;
-    ss << "                for (int k = 0; k < tmp.n_elem; ++k) {" << std::endl;
-    ss << "                    if (k != dir) tmp(k) += m(k);" << std::endl;
-    ss << "                }" << std::endl;
-    ss << "                verts.row(j) = tmp.t();" << std::endl;
-    ss << "                tmp.shed_row(dir);" << std::endl;
-    ss << "                vec values = f(tmp);" << std::endl;
-    ss << "                double value = 0.0;" << std::endl;
-    ss << "                for (int k = 0; k < coeffs.n_elem; ++k) value += coeffs(k) * values(k);" << std::endl;
-    ss << "                verts(j, dir) += value;" << std::endl;
-    ss << "            }" << std::endl;
-    ss << std::endl;
-    ss << "            umat faces((gridRes * 2) + (((gridRes - 2) * gridRes) * 2), 3);" << std::endl;
-    ss << "            for (int j = 0; j < gridRes; ++j) {" << std::endl;
-    ss << "                faces(j, 0) = 0;" << std::endl;
-    ss << "                faces(j, 1) = 1 + ((j + 1) % gridRes);" << std::endl;
-    ss << "                faces(j, 2) = 1 + j;" << std::endl;
-    ss << "            }" << std::endl;
-    ss << "            for (int j = 0; j < gridRes - 2; ++j) {" << std::endl;
-    ss << "                for (int k = 0; k < gridRes; ++k) {" << std::endl;
-    ss << "                    faces(gridRes + (((j * gridRes) + k) * 2), 0) = 1 + (j * gridRes) + k;" << std::endl;
-    ss << "                    faces(gridRes + (((j * gridRes) + k) * 2), 1) = 1 + (j * gridRes) + ((k + 1) % gridRes);" << std::endl;
-    ss << "                    faces(gridRes + (((j * gridRes) + k) * 2), 2) = 1 + ((j + 1) * gridRes) + ((k + 1) % gridRes);" << std::endl;
-    ss << "                    faces(gridRes + (((j * gridRes) + k) * 2) + 1, 0) = 1 + (j * gridRes) + k;" << std::endl;
-    ss << "                    faces(gridRes + (((j * gridRes) + k) * 2) + 1, 1) = 1 + ((j + 1) * gridRes) + ((k + 1) % gridRes);" << std::endl;
-    ss << "                    faces(gridRes + (((j * gridRes) + k) * 2) + 1, 2) = 1 + ((j + 1) * gridRes) + k;" << std::endl;
-    ss << "                }" << std::endl;
-    ss << "            }" << std::endl;
-    ss << "            for (int j = 0; j < gridRes; ++j) {" << std::endl;
-    ss << "                faces(gridRes + (((gridRes - 2) * gridRes) * 2) + j, 0) = 1 + ((gridRes - 2) * gridRes) + j;" << std::endl;
-    ss << "                faces(gridRes + (((gridRes - 2) * gridRes) * 2) + j, 1) = 1 + ((gridRes - 2) * gridRes) + ((j + 1) % gridRes);" << std::endl;
-    ss << "                faces(gridRes + (((gridRes - 2) * gridRes) * 2) + j, 2) = 1 + ((gridRes - 1) * gridRes);" << std::endl;
-    ss << "            }" << std::endl;
-    ss << std::endl;
-    ss << "            mat fNormals(faces.n_rows, 3);" << std::endl;
-    ss << "            for (int j = 0; j < faces.n_rows; ++j) {" << std::endl;
-    ss << "                unsigned i1 = faces(j, 0);" << std::endl;
-    ss << "                unsigned i2 = faces(j, 1);" << std::endl;
-    ss << "                unsigned i3 = faces(j, 2);" << std::endl;
-    ss << "                vec v1 = verts.row(i1).t();" << std::endl;
-    ss << "                vec v2 = verts.row(i2).t();" << std::endl;
-    ss << "                vec v3 = verts.row(i3).t();" << std::endl;
-    ss << "                vec N = normalise(cross(v2 - v1, v3 - v1));" << std::endl;
-    ss << "                fNormals.row(j) = N.t();" << std::endl;
-    ss << "            }" << std::endl;
-    ss << std::endl;
-    ss << "            mat vNormals(verts.n_rows, 3, fill::zeros);" << std::endl;
-    ss << "            for (int j = 0; j < faces.n_rows; ++j) {" << std::endl;
-    ss << "                unsigned i1 = faces(j, 0);" << std::endl;
-    ss << "                unsigned i2 = faces(j, 1);" << std::endl;
-    ss << "                unsigned i3 = faces(j, 2);" << std::endl;
-    ss << "                vNormals.row(i1) += fNormals.row(j);" << std::endl;
-    ss << "                vNormals.row(i2) += fNormals.row(j);" << std::endl;
-    ss << "                vNormals.row(i3) += fNormals.row(j);" << std::endl;
-    ss << "            }" << std::endl;
-    ss << std::endl;
-    ss << "            for (int j = 0; j < vNormals.n_rows; ++j) vNormals.row(j) = normalise(vNormals.row(j));" << std::endl;
-    ss << std::endl;
-    ss << "            mat eFaces(faces.n_rows * 3, 3);" << std::endl;
-    ss << "            mat eNormals(faces.n_rows * 3, 3);" << std::endl;
-    ss << "            for (int j = 0; j < faces.n_rows; ++j) {" << std::endl;
-    ss << "                unsigned i1 = faces(j, 0);" << std::endl;
-    ss << "                unsigned i2 = faces(j, 1);" << std::endl;
-    ss << "                unsigned i3 = faces(j, 2);" << std::endl;
-    ss << "                eFaces.row(j * 3) = verts.row(i1);" << std::endl;
-    ss << "                eFaces.row((j * 3) + 1) = verts.row(i2);" << std::endl;
-    ss << "                eFaces.row((j * 3) + 2) = verts.row(i3);" << std::endl;
-    ss << "                eNormals.row(j * 3) = vNormals.row(i1);" << std::endl;
-    ss << "                eNormals.row((j * 3) + 1) = vNormals.row(i2);" << std::endl;
-    ss << "                eNormals.row((j * 3) + 2) = vNormals.row(i3);" << std::endl;
-    ss << "            }" << std::endl;
-    ss << std::endl;
-    ss << "            ellipsoidsL[i] = eFaces;" << std::endl;
-    ss << "            ellipsoidsNL[i] = eNormals;" << std::endl;
-    ss << std::endl;
-    ss << "            cov.shed_row(dir);" << std::endl;
-    ss << "            cov.shed_col(dir);" << std::endl;
-    ss << "            eig_sym(eigval, eigvec, cov);" << std::endl;
-    ss << "            for (int j = 0; j < 2; ++j) eAxes(j) = sqrt(eigval(j) * percentile);" << std::endl;
-    ss << std::endl;
-    ss << "            mat vertsM(1 + (gridRes * gridRes), 2);" << std::endl;
-    ss << "            verts(0, 0) = 0.0; verts(0, 1) = 0.0;" << std::endl;
-    ss << "            for (int j = 1; j <= gridRes; ++j) {" << std::endl;
-    ss << "                for (int k = 0; k < gridRes; ++k) {" << std::endl;
-    ss << "                    vertsM(1 + ((j - 1) * gridRes) + k, 0) = ((eAxes(0) / gridRes) * j) * cos(((2 * M_PI) / gridRes) * k);" << std::endl;
-    ss << "                    vertsM(1 + ((j - 1) * gridRes) + k, 1) = ((eAxes(1) / gridRes) * j) * sin(((2 * M_PI) / gridRes) * k);" << std::endl;
-    ss << "                }" << std::endl;
-    ss << "            }" << std::endl;
-    ss << std::endl;
-    ss << "            vertsM = (eigvec * vertsM.t()).t();" << std::endl;
-    ss << "            vertsM.insert_cols(dir, 1, true);" << std::endl;
-    ss << "            for (int j = 0; j < vertsM.n_rows; ++j) {" << std::endl;
-    ss << "                vec tmp = vertsM.row(j).t();" << std::endl;
-    ss << "                for (int k = 0; k < tmp.n_elem; ++k) {" << std::endl;
-    ss << "                    if (k != dir) tmp(k) += m(k);" << std::endl;
-    ss << "                }" << std::endl;
-    ss << "                vertsM.row(j) = tmp.t();" << std::endl;
-    ss << "                tmp.shed_row(dir);" << std::endl;
-    ss << "                vec values = f(tmp);" << std::endl;
-    ss << "                double value = 0.0;" << std::endl;
-    ss << "                for (int k = 0; k < coeffs.n_elem; ++k) value += coeffs(k) * values(k);" << std::endl;
-    ss << "                vertsM(j, dir) += value;" << std::endl;
-    ss << "            }" << std::endl;
-    ss << std::endl;
-    ss << "            umat facesM(gridRes + (((gridRes - 1) * gridRes) * 2), 3);" << std::endl;
-    ss << "            for (int j = 0; j < gridRes; ++j) {" << std::endl;
-    ss << "                facesM(j, 0) = 0;" << std::endl;
-    ss << "                facesM(j, 1) = 1 + ((j + 1) % gridRes);" << std::endl;
-    ss << "                facesM(j, 2) = 1 + j;" << std::endl;
-    ss << "            }" << std::endl;
-    ss << "            for (int j = 0; j < gridRes - 1; ++j) {" << std::endl;
-    ss << "                for (int k = 0; k < gridRes; ++k) {" << std::endl;
-    ss << "                    facesM(gridRes + (((j * gridRes) + k) * 2), 0) = 1 + (j * gridRes) + k;" << std::endl;
-    ss << "                    facesM(gridRes + (((j * gridRes) + k) * 2), 1) = 1 + (j * gridRes) + ((k + 1) % gridRes);" << std::endl;
-    ss << "                    facesM(gridRes + (((j * gridRes) + k) * 2), 2) = 1 + ((j + 1) * gridRes) + ((k + 1) % gridRes);" << std::endl;
-    ss << "                    facesM(gridRes + (((j * gridRes) + k) * 2) + 1, 0) = 1 + (j * gridRes) + k;" << std::endl;
-    ss << "                    facesM(gridRes + (((j * gridRes) + k) * 2) + 1, 1) = 1 + ((j + 1) * gridRes) + ((k + 1) % gridRes);" << std::endl;
-    ss << "                    facesM(gridRes + (((j * gridRes) + k) * 2) + 1, 2) = 1 + ((j + 1) * gridRes) + k;" << std::endl;
-    ss << "                }" << std::endl;
-    ss << "            }" << std::endl;
-    ss << std::endl;
-    ss << "            mat fNormalsM(facesM.n_rows, 3);" << std::endl;
-    ss << "            for (int j = 0; j < facesM.n_rows; ++j) {" << std::endl;
-    ss << "                unsigned i1 = facesM(j, 0);" << std::endl;
-    ss << "                unsigned i2 = facesM(j, 1);" << std::endl;
-    ss << "                unsigned i3 = facesM(j, 2);" << std::endl;
-    ss << "                vec v1 = vertsM.row(i1).t();" << std::endl;
-    ss << "                vec v2 = vertsM.row(i2).t();" << std::endl;
-    ss << "                vec v3 = vertsM.row(i3).t();" << std::endl;
-    ss << "                vec N = normalise(cross(v2 - v1, v3 - v1));" << std::endl;
-    ss << "                fNormalsM.row(j) = N.t();" << std::endl;
-    ss << "            }" << std::endl;
-    ss << std::endl;
-    ss << "            mat vNormalsM(vertsM.n_rows, 3, fill::zeros);" << std::endl;
-    ss << "            for (int j = 0; j < facesM.n_rows; ++j) {" << std::endl;
-    ss << "                unsigned i1 = facesM(j, 0);" << std::endl;
-    ss << "                unsigned i2 = facesM(j, 1);" << std::endl;
-    ss << "                unsigned i3 = facesM(j, 2);" << std::endl;
-    ss << "                vNormalsM.row(i1) += fNormalsM.row(j);" << std::endl;
-    ss << "                vNormalsM.row(i2) += fNormalsM.row(j);" << std::endl;
-    ss << "                vNormalsM.row(i3) += fNormalsM.row(j);" << std::endl;
-    ss << "            }" << std::endl;
-    ss << std::endl;
-    ss << "            for (int j = 0; j < vNormalsM.n_rows; ++j) vNormalsM.row(j) = normalise(vNormalsM.row(j));" << std::endl;
-    ss << std::endl;
-    ss << "            mat eMFaces(facesM.n_rows * 3, 3);" << std::endl;
-    ss << "            mat eMNormals(facesM.n_rows * 3, 3);" << std::endl;
-    ss << "            for (int j = 0; j < facesM.n_rows; ++j) {" << std::endl;
-    ss << "                unsigned i1 = facesM(j, 0);" << std::endl;
-    ss << "                unsigned i2 = facesM(j, 1);" << std::endl;
-    ss << "                unsigned i3 = facesM(j, 2);" << std::endl;
-    ss << "                eMFaces.row(j * 3) = vertsM.row(i1);" << std::endl;
-    ss << "                eMFaces.row((j * 3) + 1) = vertsM.row(i2);" << std::endl;
-    ss << "                eMFaces.row((j * 3) + 2) = vertsM.row(i3);" << std::endl;
-    ss << "                eMNormals.row(j * 3) = vNormalsM.row(i1);" << std::endl;
-    ss << "                eMNormals.row((j * 3) + 1) = vNormalsM.row(i2);" << std::endl;
-    ss << "                eMNormals.row((j * 3) + 2) = vNormalsM.row(i3);" << std::endl;
-    ss << "            }" << std::endl;
-    ss << std::endl;
-    ss << "            ellipsoidsML[i] = eMFaces;" << std::endl;
-    ss << "            ellipsoidsMNL[i] = eMNormals;" << std::endl;
-    ss << "        } else {" << std::endl;
-    ss << "            ellipsoidsL[i] = R_NilValue;" << std::endl;
-    ss << "            ellipsoidsNL[i] = R_NilValue;" << std::endl;
-    ss << "            ellipsoidsML[i] = R_NilValue;" << std::endl;
-    ss << "            ellipsoidsMNL[i] = R_NilValue;" << std::endl;
-    ss << "        }" << std::endl;
-    ss << "    }" << std::endl;
-    ss << "    return Rcpp::List::create(ellipsoidsL, ellipsoidsNL, ellipsoidsML, ellipsoidsMNL);" << std::endl;
-    ss << "}" << std::endl;
-
-    return ss.str();
 }
 
 //   -*-   -*-   -*-
@@ -1861,7 +1428,6 @@ Rcpp::List afCECCppRoutine (
     } catch (std::bad_alloc &e) {
         throw "Not enough memory.";
     } catch (std::exception &e) {
-        printf(e.what());
         throw "The initialLabels parameter should be either a string directive or a matrix of the type integer.";
     }
 
@@ -1879,7 +1445,7 @@ Rcpp::List afCECCppRoutine (
                 case STRSXP : {
                     if (initialLabelsStr == "random") {
                         //for (int j = 0; j < pointsNum; ++j) labels[j] = (RandomInteger() & 2147483647) % maxClusters;
-                        for (int j = 0; j < pointsNum; ++j) labels[j] = rand() % maxClusters;
+                        for (int j = 0; j < pointsNum; ++j) labels[j] = RandomInteger() % maxClusters;
                     } else {
                         // We perform the k-means++ algorithm.
                         mat centers(dim, maxClusters);
@@ -1964,218 +1530,15 @@ Rcpp::List afCECCppRoutine (
                 }
             }
         } catch (std::bad_alloc &e) {
-            if (printErrorMessages) printf("(Start %d): Not enough memory.\n", i);
         } catch (const char *e) {
-            if (printErrorMessages) printf("(Start %d): %s\n", i, e);
         } catch (...) {
-            if (printErrorMessages) printf("(Start %d): An unknown error occurred.\n", i);
         }
     }
 
     //if (EMin == INFINITY) throw "A clustering hasn't been found during any of the starts.";
     return bestRes;
 } catch (const char *e) {
-    if (printErrorMessages) printf("%s\n", e);
     return Rcpp::List();
 } catch (...) {
-    if (printErrorMessages) printf("An unknown error occurred.\n");
     return Rcpp::List();
-}
-
-//   -*-   -*-   -*-
-
-// [[Rcpp::export]]
-double RandIndex(std::vector<int> labels1, std::vector<int> labels2, int maxClusters1, int maxClusters2) {
-    int n = labels1.size();
-
-    int *clustersMap = new int[maxClusters1];
-    bool *clustersOccurrence = new bool[maxClusters1];
-    for (int i = 0; i < maxClusters1; ++i) clustersOccurrence[i] = false;
-    int activeClustersNum1 = 0;
-    for (int i = 0; i < n; ++i) {
-        int cl = labels1[i];
-        if (!clustersOccurrence[cl]) {
-            labels1[i] = activeClustersNum1;
-            clustersMap[cl] = activeClustersNum1++;
-            clustersOccurrence[cl] = true;
-        } else
-            labels1[i] = clustersMap[cl];
-    }
-    delete[] clustersMap;
-    delete[] clustersOccurrence;
-
-    clustersMap = new int[maxClusters2];
-    clustersOccurrence = new bool[maxClusters2];
-    for (int i = 0; i < maxClusters2; ++i) clustersOccurrence[i] = false;
-    int activeClustersNum2 = 0;
-    for (int i = 0; i < n; ++i) {
-        int cl = labels2[i];
-        if (!clustersOccurrence[cl]) {
-            labels2[i] = activeClustersNum2;
-            clustersMap[cl] = activeClustersNum2++;
-            clustersOccurrence[cl] = true;
-        } else
-            labels2[i] = clustersMap[cl];
-    }
-    delete[] clustersMap;
-    delete[] clustersOccurrence;
-
-    int *clustersCard1 = new int[activeClustersNum1];
-    int *clustersCard2 = new int[activeClustersNum2];
-    for (int i = 0; i < activeClustersNum1; ++i) clustersCard1[i] = 0;
-    for (int i = 0; i < activeClustersNum2; ++i) clustersCard2[i] = 0;
-    for (int i = 0; i < n; ++i) {
-        ++clustersCard1[labels1[i]];
-        ++clustersCard2[labels2[i]];
-    }
-
-    int **clusters1 = new int*[activeClustersNum1];
-    for (int i = 0; i < activeClustersNum1; ++i) clusters1[i] = new int[clustersCard1[i]];
-    for (int i = 0; i < activeClustersNum1; ++i) clustersCard1[i] = 0;
-    for (int i = 0; i < n; ++i) {
-        int cl = labels1[i];
-        clusters1[cl][clustersCard1[cl]++] = i;
-    }
-
-    long long TP = 0;
-    long long TN = 0;
-    int *classesMap = new int[activeClustersNum2];
-    int *classesInvMap = new int[activeClustersNum2];
-    bool *classesOccurrence = new bool[activeClustersNum2];
-    for (int i = 0; i < activeClustersNum2; ++i) classesOccurrence[i] = false;
-    int *classesCard = new int[activeClustersNum2];
-    for (int i = 0; i < activeClustersNum1; ++i) {
-        int classesNum = 0;
-        for (int j = 0; j < clustersCard1[i]; ++j) {
-            int ind = clusters1[i][j];
-            int cl = labels2[ind];
-            if (!classesOccurrence[cl]) {
-                classesCard[classesNum] = 1;
-                classesMap[cl] = classesNum;
-                classesInvMap[classesNum++] = cl;
-                classesOccurrence[cl] = true;
-            } else
-                ++classesCard[classesMap[cl]];
-        }
-
-        for (int j = 0; j < classesNum; ++j) {
-            if (classesCard[j] >= 2) TP += (((long long)classesCard[j]) * (classesCard[j] - 1)) / 2;
-            TN += ((long long)classesCard[j]) * (n - clustersCard1[i] - clustersCard2[classesInvMap[j]] + classesCard[j]);
-        }
-
-        for (int j = 0; j < clustersCard1[i]; ++j) {
-            int ind = clusters1[i][j];
-            int cl = labels2[ind];
-            classesOccurrence[cl] = false;
-        }
-    }
-    TN = TN / 2;
-
-    for (int i = 0; i < activeClustersNum1; ++i) delete[] clusters1[i];
-    delete[] clusters1;
-    delete[] classesMap;
-    delete[] classesInvMap;
-    delete[] classesOccurrence;
-    delete[] classesCard;
-
-    return ((double)(TP + TN)) / ((((long long)n) * (n - 1)) / 2);
-}
-
-//   -*-   -*-   -*-
-
-// [[Rcpp::export]]
-double JaccardIndex(std::vector<int> labels1, std::vector<int> labels2, int maxClusters1, int maxClusters2) {
-    int n = labels1.size();
-
-    int *clustersMap = new int[maxClusters1];
-    bool *clustersOccurrence = new bool[maxClusters1];
-    for (int i = 0; i < maxClusters1; ++i) clustersOccurrence[i] = false;
-    int activeClustersNum1 = 0;
-    for (int i = 0; i < n; ++i) {
-        int cl = labels1[i];
-        if (!clustersOccurrence[cl]) {
-            labels1[i] = activeClustersNum1;
-            clustersMap[cl] = activeClustersNum1++;
-            clustersOccurrence[cl] = true;
-        } else
-            labels1[i] = clustersMap[cl];
-    }
-    delete[] clustersMap;
-    delete[] clustersOccurrence;
-
-    clustersMap = new int[maxClusters2];
-    clustersOccurrence = new bool[maxClusters2];
-    for (int i = 0; i < maxClusters2; ++i) clustersOccurrence[i] = false;
-    int activeClustersNum2 = 0;
-    for (int i = 0; i < n; ++i) {
-        int cl = labels2[i];
-        if (!clustersOccurrence[cl]) {
-            labels2[i] = activeClustersNum2;
-            clustersMap[cl] = activeClustersNum2++;
-            clustersOccurrence[cl] = true;
-        } else
-            labels2[i] = clustersMap[cl];
-    }
-    delete[] clustersMap;
-    delete[] clustersOccurrence;
-
-    int *clustersCard1 = new int[activeClustersNum1];
-    int *clustersCard2 = new int[activeClustersNum2];
-    for (int i = 0; i < activeClustersNum1; ++i) clustersCard1[i] = 0;
-    for (int i = 0; i < activeClustersNum2; ++i) clustersCard2[i] = 0;
-    for (int i = 0; i < n; ++i) {
-        ++clustersCard1[labels1[i]];
-        ++clustersCard2[labels2[i]];
-    }
-
-    int **clusters1 = new int*[activeClustersNum1];
-    for (int i = 0; i < activeClustersNum1; ++i) clusters1[i] = new int[clustersCard1[i]];
-    for (int i = 0; i < activeClustersNum1; ++i) clustersCard1[i] = 0;
-    for (int i = 0; i < n; ++i) {
-        int cl = labels1[i];
-        clusters1[cl][clustersCard1[cl]++] = i;
-    }
-
-    long long TP = 0;
-    long long TN = 0;
-    int *classesMap = new int[activeClustersNum2];
-    int *classesInvMap = new int[activeClustersNum2];
-    bool *classesOccurrence = new bool[activeClustersNum2];
-    for (int i = 0; i < activeClustersNum2; ++i) classesOccurrence[i] = false;
-    int *classesCard = new int[activeClustersNum2];
-    for (int i = 0; i < activeClustersNum1; ++i) {
-        int classesNum = 0;
-        for (int j = 0; j < clustersCard1[i]; ++j) {
-            int ind = clusters1[i][j];
-            int cl = labels2[ind];
-            if (!classesOccurrence[cl]) {
-                classesCard[classesNum] = 1;
-                classesMap[cl] = classesNum;
-                classesInvMap[classesNum++] = cl;
-                classesOccurrence[cl] = true;
-            } else
-                ++classesCard[classesMap[cl]];
-        }
-
-        for (int j = 0; j < classesNum; ++j) {
-            if (classesCard[j] >= 2) TP += (((long long)classesCard[j]) * (classesCard[j] - 1)) / 2;
-            TN += ((long long)classesCard[j]) * (n - clustersCard1[i] - clustersCard2[classesInvMap[j]] + classesCard[j]);
-        }
-
-        for (int j = 0; j < clustersCard1[i]; ++j) {
-            int ind = clusters1[i][j];
-            int cl = labels2[ind];
-            classesOccurrence[cl] = false;
-        }
-    }
-    TN = TN / 2;
-
-    for (int i = 0; i < activeClustersNum1; ++i) delete[] clusters1[i];
-    delete[] clusters1;
-    delete[] classesMap;
-    delete[] classesInvMap;
-    delete[] classesOccurrence;
-    delete[] classesCard;
-
-    return ((double)TP) / (((((long long)n) * (n - 1)) / 2) - TN);
 }

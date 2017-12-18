@@ -1,8 +1,8 @@
-\name{plot}
-\alias{plot}
+\name{plot.afCEC}
+\alias{plot.afCEC}
 
 \title{
-plot
+plot.afCEC
 }
 
 \description{
@@ -24,10 +24,17 @@ The particular items are drawn cluster-by-cluster in the following order:
 The functionality concerning drawing the means (see the \code{draw_means} argument description for more details), ellipses / ellipsoids of confidence (see the \code{draw_ellipsoids} argument description for more details) and curves / surfaces (see the \code{draw_surfaces} argument description for more details) doesn't work if object x was retrieved after clustering the data with the active function family defined by the matrix of the active function components values on the data set. In that case, the above-mentioned arguments as well as the other ones related to them (for example \code{meansSize2D}) are ignored and only data points are drawn on the chart. See \link{afCEC}.
 }
 }
+\strong{Example:} (due to the long running time it is not placed in the "Examples" section)
+\cr
+\cr
+\code{library(afCEC);}\cr
+\code{data(airplane);}\cr
+\code{result <- afCEC(airplane, 17);}\cr
+\code{plot(result);}
 }
 
 \usage{
-plot (
+\method{plot}{afCEC} (
     x,
     draw_points=TRUE,
     draw_means=TRUE,
@@ -46,7 +53,9 @@ plot (
     meansAlpha3D=0.5, meansSize3D=0.01, meansColor3D="black",
     ellipsoidsAlpha3D=0.25, ellipsoidsColor3D="cluster",
     surfacesAlpha3D=0.5, surfacesColor3D="cluster",
-    XLabel3D="X", YLabel3D="Y", ZLabel3D="Z"
+    XLabel3D="X", YLabel3D="Y", ZLabel3D="Z",
+	
+	...
 )
 }
 
@@ -213,6 +222,10 @@ Determines the label on the Y axis of the chart drawn by the plot function. The 
 Determines the label on the Y axis of the chart drawn by the plot function. The argument is used only in the case of the 3D data. The default value is "Z".
 }
 
+\item{...}{
+The remaining unused arguments of the built-in R plot function.
+}
+
 }
 
 \value{
@@ -224,8 +237,8 @@ None.
 }
 
 \examples{
-library(afCEC);
-data(airplane);
-result <- afCEC(airplane, 17);
-plot(result);
+	library(afCEC);
+	data(dog);
+	res<-afCEC(dog,5,numberOfStarts=1);
+	plot(res);
 }

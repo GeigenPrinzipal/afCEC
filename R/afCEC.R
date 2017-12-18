@@ -18,11 +18,7 @@ afCEC <- function(points, maxClusters, initialLabels="k-means++", cardMin=0.01, 
                     }
                 }
             } else {
-                # Active function given by the formula
-                CalculateArrayOfValuesCode = GenerateCodeForArrayConstruction(values);
-                #writeLines(CalculateArrayOfValuesCode);
-                sourceCpp(code=CalculateArrayOfValuesCode);
-                valuesArray = CalculateArrayOfValues(t(points));
+                stop("Wrong type of the \"active function\" parameter");
             }
         } else {
             stop("Wrong type of the \"active function\" parameter");
@@ -37,32 +33,15 @@ afCEC <- function(points, maxClusters, initialLabels="k-means++", cardMin=0.01, 
     res=afCECCppRoutine(t(points),maxClusters,initialLabels,cardMin,costThreshold,minIterations,maxIterations,numberOfStarts,method,valuesArray,interactive);
     if (length(res) > 0) {
         if (class(values) == "character") {
-            if (values == "quadratic") {
-                if (!interactive) {
-                    UpdateMeansForQuadraticFunction(res);
-                    res[["data"]] = points;
-                    res[["formula"]] = values;
-                } else {
-                    for (i in 1:length(res)) {
-                        UpdateMeansForQuadraticFunction(res[[i]]);
-                        res[[i]][["data"]] = points;
-                        res[[i]][["formula"]] = values;
-                    }
-                }
+            if (!interactive) {
+                UpdateMeansForQuadraticFunction(res);
+                res[["data"]] = points;
+                res[["formula"]] = values;
             } else {
-                UpdateMeansCode = GenerateCodeForUpdatingMeans(values);
-                #writeLines(UpdateMeansCode);
-                sourceCpp(code=UpdateMeansCode);
-                if (!interactive) {
-                    UpdateMeans(res);
-                    res[["data"]] = points;
-                    res[["formula"]] = values;
-                } else {
-                    for (i in 1:length(res)) {
-                        UpdateMeans(res[[i]]);
-                        res[[i]][["data"]] = points;
-                        res[[i]][["formula"]] = values;
-                    }
+                for (i in 1:length(res)) {
+                    UpdateMeansForQuadraticFunction(res[[i]]);
+                    res[[i]][["data"]] = points;
+                    res[[i]][["formula"]] = values;
                 }
             }
         } else {
@@ -103,7 +82,9 @@ plot.afCEC <- function(
     meansAlpha3D=0.5,meansSize3D=0.01,meansColor3D="black",
     ellipsoidsAlpha3D=0.25,ellipsoidsColor3D="cluster",
     surfacesAlpha3D=0.5,surfacesColor3D="cluster",
-    XLabel3D="X",YLabel3D="Y",ZLabel3D="Z"
+    XLabel3D="X",YLabel3D="Y",ZLabel3D="Z",
+
+    ...
 ) {
     if (dim(x$data)[2] == 2) {
         if (draw_points) {
@@ -115,12 +96,7 @@ plot.afCEC <- function(
         }
         if ((!is.null(x$formula)) && (draw_means || draw_ellipsoids || draw_surfaces)) {
             if (draw_ellipsoids || draw_surfaces) {
-                if (x$formula != "quadratic") {
-                    # formula
-                    CalculateEllipsesOfConfidenceCode = GenerateCodeForCalculatingEllipsesOfConfidence(x$formula);
-                    sourceCpp(code=CalculateEllipsesOfConfidenceCode);
-                    ellipses=CalculateEllipsesOfConfidence(x, confidence, grid_resolution);
-                } else {
+                if (x$formula == "quadratic") {
                     # quadratic function
                     ellipses=CalculateEllipsesOfConfidenceForQuadraticFunction(x, confidence, grid_resolution);
                 }
@@ -149,12 +125,7 @@ plot.afCEC <- function(
         }
         if ((!is.null(x$formula)) && (draw_means || draw_ellipsoids || draw_surfaces)) {
             if (draw_ellipsoids || draw_surfaces) {
-                if (x$formula != "quadratic") {
-                    #formula
-                    CalculateEllipsoidsOfConfidenceCode = GenerateCodeForCalculatingEllipsoidsOfConfidence(x$formula);
-                    sourceCpp(code=CalculateEllipsoidsOfConfidenceCode);
-                    ellipsoids=CalculateEllipsoidsOfConfidence(x, confidence, grid_resolution);
-                } else {
+                if (x$formula == "quadratic") {
                     # quadratic function
                     ellipsoids=CalculateEllipsoidsOfConfidenceForQuadraticFunction(x, confidence, grid_resolution);
                 }
@@ -170,43 +141,4 @@ plot.afCEC <- function(
     } else {
         stop("Cannot plot data of dimensionality other than 2 or 3");
     }
-}
-
-#   -*-   -*-   -*-
-
-SampleSphereUniform <- function(n, dim) {
-    pts = matrix(rnorm(n * (dim + 1)), n, dim + 1);
-    for (i in 1:n) {
-        r = sqrt(t(pts[i, 1:(dim + 1)]) %*% pts[i, 1:(dim + 1)]);
-        pts[i, 1:(dim + 1)] = pts[i, 1:(dim + 1)] / r;
-    }
-    return(pts);
-}
-
-#   -*-   -*-   -*-
-
-SampleBallUniform <- function(n, dim) {
-    pts = matrix(rnorm(n * dim), n, dim);
-    for (i in 1:n) {
-        r = sqrt(t(pts[i, 1:dim]) %*% pts[i, 1:dim]);
-        pts[i, 1:dim] = (pts[i, 1:dim] / r) * (runif(1)^(1 / dim));
-    }
-    return(pts);
-}
-
-#   -*-   -*-   -*-
-
-SampleTorusUniform <- function(R, r, numberOfPoints) {
-    points=matrix(rep(0, numberOfPoints*3), numberOfPoints, 3);
-    for (i in 1:numberOfPoints) {
-        theta=2*pi*runif(1, 0, 1);
-        phi=2*pi*runif(1, 0, 1);
-        x=(R+(r*cos(phi)))*cos(theta);
-        y=(R+(r*cos(phi)))*sin(theta);
-        z=r*sin(phi);
-        points[i, 1]=x;
-        points[i, 2]=y;
-        points[i, 3]=z;
-    }
-    return(points);
 }

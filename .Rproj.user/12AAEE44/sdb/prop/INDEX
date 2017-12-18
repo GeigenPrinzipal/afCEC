@@ -74,4 +74,6 @@ c%3A%2Frtools%2Fgcc-4.6.3%2Finclude%2Fc%2B%2B%2F4.6.3%2Fbits%2Fstl_algobase.h="3
 ~%2FafCEC%2Fsrc%2FUniformMeshSampling.cpp="A6CC6BF6"
 ~%2FafCEC%2Fsrc%2FUtils.h="BE1A6A05"
 ~%2FafCEC%2Fsrc%2FafCEC.cpp="3B6DAFE3"
+~%2FafCEC%2Fsrc%2Fmul2.cpp="45FE9E44"
+~%2FafCEC%2Fsrc%2Fmul2.h="680AAA58"
 ~%2FafCEC%2Fsrc%2Fphi.cpp="9D4A42BA"

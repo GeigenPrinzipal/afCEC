@@ -49,7 +49,7 @@ The defalt value is "k-means++".
 Value so that if the number of points in particular cluster relatively to the size of the whole data drops bellow, then that cluster gets removed and it's data is assigned to the other clusters. The default value is 0.01.
 }
 
-\item{costTreshold}{
+\item{costThreshold}{
 Negative value so that if the difference between the calculated cost in the subsequent iterations is greater than it then the afCEC terminates returning the solution from the terminated iteration as the final solution (in the present start), provided that at least minIterations already passed. The default value is -0.000001;
 }
 
@@ -75,7 +75,7 @@ The default value is "Hartigan".
 }
 
 \item{values}{
-Definition of the active function family used to perform the clustering. There are 3 options allowed:
+Definition of the active function family used to perform the clustering. There are 2 options allowed:
 \itemize{
 \item{"quadratic" - indicates that the function family of the form:
 \cr
@@ -85,7 +85,6 @@ f(x_1,...,x_(n-1))=a_1*x_1^2+...+a_(n-1)*x_(n-1)^2+a_n*x_1+...+a_(2*n-2)*x_(n-1)
 \cr
 where n is the dimensionality of the data and a_i are the optimal coefficients determined by afCEC using the linear least square fitting, will be used to perform the clustering.
 }
-\item{"String containing the user-defined formula. See more in \code{\link[=UserDefinedFormulas]{User-defined formulas}}.}
 \item{A ((m*n) x #points) matrix containing the values of the particular components of the active function on the data set, placed according to the following layout (row by row):
 \cr
 \cr
@@ -131,7 +130,7 @@ The default value is "quadratic".
 \strong{Remarks:}
 \cr
 \cr
-In the case of the third way of defining the function, the returned object doesn't contain the information about the means coordinates corresponding to the active direction. Moreover, the plotting capabilities of the afCEC package are severely impaired in that case. See \code{\link{plot}}.
+In the case of the second way of defining the function, the returned object doesn't contain the information about the means coordinates corresponding to the active direction. Moreover, the plotting capabilities of the afCEC package are severely impaired in that case. See \code{\link{plot}}.
 }
 
 \item{interactive}{
@@ -152,52 +151,44 @@ Indicates if the algorithm runs in the "interactive" mode. The "interactive" mod
 }
 
 \examples{
-# The following three examples demonstrate three equivalent ways of passing the same
-# 3D quadratic active function to the afCEC routine:
-
-# 1) Using "quadratic" value (default):
-
-library(afCEC);
-data(airplane);
-result <- afCEC(airplane, 17);
-
-# what is equivalent to:
-
-library(afCEC);
-data(airplane);
-result <- afCEC(airplane, 17, values="quadratic");
-
-# 2) Using the string with the user-defined formula:
-
-library(afCEC);
-data(airplane);
-formula = paste(
-    "f:R^2 -> R^5\n",
-    "f^1(x) = x(1)^2\n",
-    "f^2(x) = x(2)^2\n",
-    "f^3(x) = x(1)\n",
-    "f^4(x) = x(2)\n",
-    "f^5(x) = 1\n",
-    sep=""
-);
-result <- afCEC(airplane, 17, values=formula);
-
-# 3) Using the matrix containing the explicit values of the active function across the
-#    subsequent dimensions:
-
-library(afCEC);
-data(airplane);
-values = matrix(rep(0, 5*3*dim(airplane)[1]), 5*3, dim(airplane)[1]);
-for (i in 1:dim(airplane)[1]) {
-    tmp <- airplane[i,2:3]; 
-    for (j in 1:3) {
-        values[((j - 1) * 5) + 1, i] <- tmp[1]^2;
-        values[((j - 1) * 5) + 2, i] <- tmp[2]^2;
-        values[((j - 1) * 5) + 3, i] <- tmp[1];
-        values[((j - 1) * 5) + 4, i] <- tmp[2];
-        values[((j - 1) * 5) + 5, i] <- 1;
-        if (j < 3) tmp[j] <- airplane[i,j];
-    }
-}
-result <- afCEC(airplane, 17, values=values);
+	\dontshow{
+		library(afCEC);
+		data(dog);
+		res<-afCEC(dog,5,numberOfStarts=1);
+	}
+	\dontrun{
+		# The following two examples demonstrate two equivalent ways of passing the same
+		# 3D quadratic active function to the afCEC routine:
+		
+		# 1) Using "quadratic" value (default):
+		
+		library(afCEC);
+		data(airplane);
+		result <- afCEC(airplane, 17);
+		
+		# what is equivalent to:
+		
+		library(afCEC);
+		data(airplane);
+		result <- afCEC(airplane, 17, values="quadratic");
+		
+		# 2) Using the matrix containing the explicit values of the active function
+		#    across the subsequent dimensions:
+		
+		library(afCEC);
+		data(airplane);
+		values = matrix(rep(0, 5*3*dim(airplane)[1]), 5*3, dim(airplane)[1]);
+		for (i in 1:dim(airplane)[1]) {
+			tmp <- airplane[i,2:3];
+			for (j in 1:3) {
+				values[((j - 1) * 5) + 1, i] <- tmp[1]^2;
+				values[((j - 1) * 5) + 2, i] <- tmp[2]^2;
+				values[((j - 1) * 5) + 3, i] <- tmp[1];
+				values[((j - 1) * 5) + 4, i] <- tmp[2];
+				values[((j - 1) * 5) + 5, i] <- 1;
+				if (j < 3) tmp[j] <- airplane[i,j];
+			}
+		}
+		result <- afCEC(airplane, 17, values=values);
+	}
 }

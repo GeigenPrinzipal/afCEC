@@ -6,20 +6,9 @@
 
 using namespace Rcpp;
 
-// GenerateCodeForArrayConstruction
-std::string GenerateCodeForArrayConstruction(std::string& formula);
-RcppExport SEXP afCEC_GenerateCodeForArrayConstruction(SEXP formulaSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string& >::type formula(formulaSEXP);
-    rcpp_result_gen = Rcpp::wrap(GenerateCodeForArrayConstruction(formula));
-    return rcpp_result_gen;
-END_RCPP
-}
 // UpdateMeansForQuadraticFunction
 void UpdateMeansForQuadraticFunction(Rcpp::List& res);
-RcppExport SEXP afCEC_UpdateMeansForQuadraticFunction(SEXP resSEXP) {
+RcppExport SEXP _afCEC_UpdateMeansForQuadraticFunction(SEXP resSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::List& >::type res(resSEXP);
@@ -27,20 +16,9 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
-// GenerateCodeForUpdatingMeans
-std::string GenerateCodeForUpdatingMeans(std::string& formula);
-RcppExport SEXP afCEC_GenerateCodeForUpdatingMeans(SEXP formulaSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string& >::type formula(formulaSEXP);
-    rcpp_result_gen = Rcpp::wrap(GenerateCodeForUpdatingMeans(formula));
-    return rcpp_result_gen;
-END_RCPP
-}
 // CalculateEllipsesOfConfidenceForQuadraticFunction
 Rcpp::List CalculateEllipsesOfConfidenceForQuadraticFunction(Rcpp::List res, double confidence, int segments);
-RcppExport SEXP afCEC_CalculateEllipsesOfConfidenceForQuadraticFunction(SEXP resSEXP, SEXP confidenceSEXP, SEXP segmentsSEXP) {
+RcppExport SEXP _afCEC_CalculateEllipsesOfConfidenceForQuadraticFunction(SEXP resSEXP, SEXP confidenceSEXP, SEXP segmentsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -51,20 +29,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// GenerateCodeForCalculatingEllipsesOfConfidence
-std::string GenerateCodeForCalculatingEllipsesOfConfidence(std::string& formula);
-RcppExport SEXP afCEC_GenerateCodeForCalculatingEllipsesOfConfidence(SEXP formulaSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string& >::type formula(formulaSEXP);
-    rcpp_result_gen = Rcpp::wrap(GenerateCodeForCalculatingEllipsesOfConfidence(formula));
-    return rcpp_result_gen;
-END_RCPP
-}
 // CalculateEllipsoidsOfConfidenceForQuadraticFunction
 Rcpp::List CalculateEllipsoidsOfConfidenceForQuadraticFunction(Rcpp::List res, double confidence, int gridRes);
-RcppExport SEXP afCEC_CalculateEllipsoidsOfConfidenceForQuadraticFunction(SEXP resSEXP, SEXP confidenceSEXP, SEXP gridResSEXP) {
+RcppExport SEXP _afCEC_CalculateEllipsoidsOfConfidenceForQuadraticFunction(SEXP resSEXP, SEXP confidenceSEXP, SEXP gridResSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -75,20 +42,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// GenerateCodeForCalculatingEllipsoidsOfConfidence
-std::string GenerateCodeForCalculatingEllipsoidsOfConfidence(std::string& formula);
-RcppExport SEXP afCEC_GenerateCodeForCalculatingEllipsoidsOfConfidence(SEXP formulaSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string& >::type formula(formulaSEXP);
-    rcpp_result_gen = Rcpp::wrap(GenerateCodeForCalculatingEllipsoidsOfConfidence(formula));
-    return rcpp_result_gen;
-END_RCPP
-}
 // afCECCppRoutine
 Rcpp::List afCECCppRoutine(const arma::mat& points, int maxClusters, const SEXP& initialLabels, double cardMin, double costThreshold, int minIterations, int maxIterations, int numberOfStarts, const std::string& method, const arma::mat& values, bool interactive);
-RcppExport SEXP afCEC_afCECCppRoutine(SEXP pointsSEXP, SEXP maxClustersSEXP, SEXP initialLabelsSEXP, SEXP cardMinSEXP, SEXP costThresholdSEXP, SEXP minIterationsSEXP, SEXP maxIterationsSEXP, SEXP numberOfStartsSEXP, SEXP methodSEXP, SEXP valuesSEXP, SEXP interactiveSEXP) {
+RcppExport SEXP _afCEC_afCECCppRoutine(SEXP pointsSEXP, SEXP maxClustersSEXP, SEXP initialLabelsSEXP, SEXP cardMinSEXP, SEXP costThresholdSEXP, SEXP minIterationsSEXP, SEXP maxIterationsSEXP, SEXP numberOfStartsSEXP, SEXP methodSEXP, SEXP valuesSEXP, SEXP interactiveSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -107,43 +63,16 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// RandIndex
-double RandIndex(std::vector<int> labels1, std::vector<int> labels2, int maxClusters1, int maxClusters2);
-RcppExport SEXP afCEC_RandIndex(SEXP labels1SEXP, SEXP labels2SEXP, SEXP maxClusters1SEXP, SEXP maxClusters2SEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::vector<int> >::type labels1(labels1SEXP);
-    Rcpp::traits::input_parameter< std::vector<int> >::type labels2(labels2SEXP);
-    Rcpp::traits::input_parameter< int >::type maxClusters1(maxClusters1SEXP);
-    Rcpp::traits::input_parameter< int >::type maxClusters2(maxClusters2SEXP);
-    rcpp_result_gen = Rcpp::wrap(RandIndex(labels1, labels2, maxClusters1, maxClusters2));
-    return rcpp_result_gen;
-END_RCPP
-}
-// JaccardIndex
-double JaccardIndex(std::vector<int> labels1, std::vector<int> labels2, int maxClusters1, int maxClusters2);
-RcppExport SEXP afCEC_JaccardIndex(SEXP labels1SEXP, SEXP labels2SEXP, SEXP maxClusters1SEXP, SEXP maxClusters2SEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::vector<int> >::type labels1(labels1SEXP);
-    Rcpp::traits::input_parameter< std::vector<int> >::type labels2(labels2SEXP);
-    Rcpp::traits::input_parameter< int >::type maxClusters1(maxClusters1SEXP);
-    Rcpp::traits::input_parameter< int >::type maxClusters2(maxClusters2SEXP);
-    rcpp_result_gen = Rcpp::wrap(JaccardIndex(labels1, labels2, maxClusters1, maxClusters2));
-    return rcpp_result_gen;
-END_RCPP
-}
-// SampleMeshUniform
-arma::mat SampleMeshUniform(std::string fName, int pointsNum);
-RcppExport SEXP afCEC_SampleMeshUniform(SEXP fNameSEXP, SEXP pointsNumSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type fName(fNameSEXP);
-    Rcpp::traits::input_parameter< int >::type pointsNum(pointsNumSEXP);
-    rcpp_result_gen = Rcpp::wrap(SampleMeshUniform(fName, pointsNum));
-    return rcpp_result_gen;
-END_RCPP
+
+static const R_CallMethodDef CallEntries[] = {
+    {"_afCEC_UpdateMeansForQuadraticFunction", (DL_FUNC) &_afCEC_UpdateMeansForQuadraticFunction, 1},
+    {"_afCEC_CalculateEllipsesOfConfidenceForQuadraticFunction", (DL_FUNC) &_afCEC_CalculateEllipsesOfConfidenceForQuadraticFunction, 3},
+    {"_afCEC_CalculateEllipsoidsOfConfidenceForQuadraticFunction", (DL_FUNC) &_afCEC_CalculateEllipsoidsOfConfidenceForQuadraticFunction, 3},
+    {"_afCEC_afCECCppRoutine", (DL_FUNC) &_afCEC_afCECCppRoutine, 11},
+    {NULL, NULL, 0}
+};
+
+RcppExport void R_init_afCEC(DllInfo *dll) {
+    R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
+    R_useDynamicSymbols(dll, FALSE);
 }
