@@ -1,16 +1,15 @@
 {
     "args" : [
         "-IC:/Program Files/RStudio/resources/libclang/builtin-headers/3.4",
-        "-Ic:/Rtools/gcc-4.6.3/i686-w64-mingw32/include",
-        "-Ic:/Rtools/gcc-4.6.3/include/c++/4.6.3",
-        "-Ic:/Rtools/gcc-4.6.3/include/c++/4.6.3/i686-w64-mingw32/64",
-        "-IC:/PROGRA~1/R/R-33~1.3/library/Rcpp/include",
-        "-IC:/PROGRA~1/R/R-33~1.3/library/RCPPAR~1/include",
-        "-IC:/PROGRA~1/R/R-33~1.3/include",
-        "-DNDEBUG",
-        "-Id:/Compiler/gcc-4.9.3/local330/include"
+        "-Ic:/Rtools/mingw_64/x86_64-w64-mingw32/include",
+        "-Ic:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++",
+        "-Ic:/Rtools/mingw_64/x86_64-w64-mingw32/include/c++/x86_64-w64-mingw32",
+        "-IC:/PROGRA~1/R/R-34~1.3/library/Rcpp/include",
+        "-IC:/PROGRA~1/R/R-34~1.3/library/RCPPAR~1/include",
+        "-IC:/PROGRA~1/R/R-34~1.3/include",
+        "-DNDEBUG"
     ],
-    "hash" : "151333167814713084101471308406",
+    "hash" : "151334989414713084101471308406",
     "is_cpp" : true,
     "pch" : "Rcpp"
 }

@@ -5,7 +5,7 @@
                 "column" : 6,
                 "file" : "C:/Users/Byrski Krzysztof/Documents/afCEC/src/afCEC.cpp",
                 "kind" : 6,
-                "line" : 11,
+                "line" : 13,
                 "name" : "SetRNGSeed(unsigned int)",
                 "parent_name" : "",
                 "usr" : "c:@F@SetRNGSeed#i#"
@@ -14,7 +14,7 @@
                 "column" : 5,
                 "file" : "C:/Users/Byrski Krzysztof/Documents/afCEC/src/afCEC.cpp",
                 "kind" : 6,
-                "line" : 15,
+                "line" : 17,
                 "name" : "RandomInteger",
                 "parent_name" : "",
                 "usr" : "c:@F@RandomInteger#"
@@ -23,7 +23,7 @@
                 "column" : 7,
                 "file" : "C:/Users/Byrski Krzysztof/Documents/afCEC/src/afCEC.cpp",
                 "kind" : 6,
-                "line" : 21,
+                "line" : 23,
                 "name" : "RandomFloat",
                 "parent_name" : "",
                 "usr" : "c:@F@RandomFloat#"
@@ -32,7 +32,7 @@
                 "column" : 6,
                 "file" : "C:/Users/Byrski Krzysztof/Documents/afCEC/src/afCEC.cpp",
                 "kind" : 6,
-                "line" : 30,
+                "line" : 32,
                 "name" : "CholeskyRankOneUpdate(mat &, vec)",
                 "parent_name" : "",
                 "usr" : "c:@F@CholeskyRankOneUpdate#&$@N@arma@C@Mat>#d#$@N@arma@C@Col>#d#"
@@ -41,7 +41,7 @@
                 "column" : 6,
                 "file" : "C:/Users/Byrski Krzysztof/Documents/afCEC/src/afCEC.cpp",
                 "kind" : 6,
-                "line" : 50,
+                "line" : 52,
                 "name" : "CholeskyRankOneDowndate(mat &, vec)",
                 "parent_name" : "",
                 "usr" : "c:@F@CholeskyRankOneDowndate#&$@N@arma@C@Mat>#d#$@N@arma@C@Col>#d#"
@@ -50,7 +50,7 @@
                 "column" : 6,
                 "file" : "C:/Users/Byrski Krzysztof/Documents/afCEC/src/afCEC.cpp",
                 "kind" : 6,
-                "line" : 71,
+                "line" : 73,
                 "name" : "UpdateMeansForQuadraticFunction(Rcpp::List &)",
                 "parent_name" : "",
                 "usr" : "c:@F@UpdateMeansForQuadraticFunction#&$@N@Rcpp@C@Vector>#VI19#@N@Rcpp@CT>1#T@PreserveStorage#"
@@ -59,7 +59,7 @@
                 "column" : 12,
                 "file" : "C:/Users/Byrski Krzysztof/Documents/afCEC/src/afCEC.cpp",
                 "kind" : 6,
-                "line" : 100,
+                "line" : 102,
                 "name" : "CalculateEllipsesOfConfidenceForQuadraticFunction(Rcpp::List, double, int)",
                 "parent_name" : "",
                 "usr" : "c:@F@CalculateEllipsesOfConfidenceForQuadraticFunction#$@N@Rcpp@C@Vector>#VI19#@N@Rcpp@CT>1#T@PreserveStorage#d#I#"
@@ -68,7 +68,7 @@
                 "column" : 12,
                 "file" : "C:/Users/Byrski Krzysztof/Documents/afCEC/src/afCEC.cpp",
                 "kind" : 6,
-                "line" : 151,
+                "line" : 153,
                 "name" : "CalculateEllipsoidsOfConfidenceForQuadraticFunction(Rcpp::List, double, int)",
                 "parent_name" : "",
                 "usr" : "c:@F@CalculateEllipsoidsOfConfidenceForQuadraticFunction#$@N@Rcpp@C@Vector>#VI19#@N@Rcpp@CT>1#T@PreserveStorage#d#I#"
@@ -77,16 +77,25 @@
                 "column" : 6,
                 "file" : "C:/Users/Byrski Krzysztof/Documents/afCEC/src/afCEC.cpp",
                 "kind" : 6,
-                "line" : 362,
+                "line" : 364,
                 "name" : "afCECLloyd(const mat &, int, ivec, double, double, int, int, const mat &, bool)",
                 "parent_name" : "",
                 "usr" : "c:@F@afCECLloyd#&1$@N@arma@C@Mat>#d#I#$@N@arma@C@Col>#I#d#d#I#I#S0_#b#"
             },
             {
+                "column" : 6,
+                "file" : "C:/Users/Byrski Krzysztof/Documents/afCEC/src/afCEC.cpp",
+                "kind" : 6,
+                "line" : 835,
+                "name" : "afCECHartiganRemoveCluster(int, int, ivec &, std::set<int> &, const mat &, int, vec **, int *, mat ***, mat ***, const mat &, int, vec ***, mat ***, double **, double *, int *, vec **, double *)",
+                "parent_name" : "",
+                "usr" : "c:@F@afCECHartiganRemoveCluster#I#I#&$@N@arma@C@Col>#I#&$@N@std@C@set>#I#$@N@std@S@less>#I#$@N@std@C@allocator>#I#&1$@N@arma@C@Mat>#d#I#**$@N@arma@C@Col>#d#*I#***S7_#S12_#S6_#I#*S8_#S12_#**d#S17_#S11_#S8_#S17_#"
+            },
+            {
                 "column" : 12,
                 "file" : "C:/Users/Byrski Krzysztof/Documents/afCEC/src/afCEC.cpp",
                 "kind" : 6,
-                "line" : 833,
+                "line" : 935,
                 "name" : "afCECHartigan(const mat &, int, ivec, double, double, int, int, const mat &, bool)",
                 "parent_name" : "",
                 "usr" : "c:@F@afCECHartigan#&1$@N@arma@C@Mat>#d#I#$@N@arma@C@Col>#I#d#d#I#I#S0_#b#"
@@ -95,14 +104,14 @@
                 "column" : 12,
                 "file" : "C:/Users/Byrski Krzysztof/Documents/afCEC/src/afCEC.cpp",
                 "kind" : 6,
-                "line" : 1375,
+                "line" : 1468,
                 "name" : "afCECCppRoutine(const arma::mat &, int, const SEXP &, double, double, int, int, int, const std::string &, const arma::mat &, bool)",
                 "parent_name" : "",
                 "usr" : "c:@F@afCECCppRoutine#&1$@N@arma@C@Mat>#d#I#&1*$@S@SEXPREC#d#d#I#I#I#&1$@N@std@C@basic_string>#C#$@N@std@S@char_traits>#C#$@N@std@C@allocator>#C#S0_#b#"
             }
         ],
         "file" : "C:/Users/Byrski Krzysztof/Documents/afCEC/src/afCEC.cpp",
-        "file_last_write" : 1513332109
+        "file_last_write" : 1513623148
     },
     {
         "definitions" : [
