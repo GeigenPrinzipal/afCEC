@@ -46,3 +46,4 @@ plot(result)
 
 ![](https://raw.githubusercontent.com/GeigenPrinzipal/afCEC/gh-pages/static/fire.png)
 ![](https://raw.githubusercontent.com/GeigenPrinzipal/afCEC/gh-pages/static/fire_c.png)
+
