@@ -47,3 +47,14 @@ plot(result)
 ![](https://raw.githubusercontent.com/GeigenPrinzipal/afCEC/gh-pages/static/fire.png)
 ![](https://raw.githubusercontent.com/GeigenPrinzipal/afCEC/gh-pages/static/fire_c.png)
 
+```R
+library(afCEC)
+data(dog)
+plot(dog, asp=1, pch=20)
+result <- afCEC(dog, 5,  numberOfStarts=10);
+plot(result)
+```
+
+![](https://raw.githubusercontent.com/GeigenPrinzipal/afCEC/gh-pages/static/dog.png)
+![](https://raw.githubusercontent.com/GeigenPrinzipal/afCEC/gh-pages/static/dog_c.png)
+
