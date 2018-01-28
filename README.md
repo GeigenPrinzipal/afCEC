@@ -44,4 +44,4 @@ result <- afCEC(fire, 5,  numberOfStarts=10);
 plot(result)
 ```
 
-![](https://raw.githubusercontent.com/GeigenPrinzipal/afCEC/gh-pages/static/fire.png | width=280)![](https://raw.githubusercontent.com/GeigenPrinzipal/afCEC/gh-pages/static/fire_c.png| width=280)
+![](https://raw.githubusercontent.com/GeigenPrinzipal/afCEC/gh-pages/static/fire.png=250x250)![](https://raw.githubusercontent.com/GeigenPrinzipal/afCEC/gh-pages/static/fire_c.png=250x250)
