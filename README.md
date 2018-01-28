@@ -34,3 +34,16 @@ clusters can be obtained as well:
 - covariances (`result$covariances`)
 - cardinalities (`result$cardinalities`)
 
+Below, a simple session with **R** is presented, where 2d dataset is split into 5 clusters:
+
+```R
+library(afCEC)
+data(fire)
+plot(fire, asp=1, pch=20)
+result <- afCEC(fire, 5,  numberOfStarts=10);
+plot(result)
+```
+
+![](https://raw.githubusercontent.com/GeigenPrinzipal/afCEC/gh-pages/static/fire.png)
+
+![](https://raw.githubusercontent.com/GeigenPrinzipal/afCEC/gh-pages/static/fire_c.png)
