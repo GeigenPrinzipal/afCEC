@@ -82,5 +82,5 @@ plot3d(ship,col=result$labels+1)
 ```
 
 ![](https://raw.githubusercontent.com/GeigenPrinzipal/afCEC/gh-pages/static/ship.png)
-![](https://raw.githubusercontent.com/GeigenPrinzipal/afCEC/gh-pages/static/ship_p.png)
 ![](https://raw.githubusercontent.com/GeigenPrinzipal/afCEC/gh-pages/static/ship_c.png)
+![](https://raw.githubusercontent.com/GeigenPrinzipal/afCEC/gh-pages/static/ship_p.png)
