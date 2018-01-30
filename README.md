@@ -58,3 +58,16 @@ plot(result)
 ![](https://raw.githubusercontent.com/GeigenPrinzipal/afCEC/gh-pages/static/dog.png)
 ![](https://raw.githubusercontent.com/GeigenPrinzipal/afCEC/gh-pages/static/dog_c.png)
 
+```R
+data(airplane);
+plot3d(airplane,col="black",aspect=FALSE)
+
+result <- afCEC(airplane, 17,  numberOfStarts=30);
+plot(result)
+plot(result, draw_points=TRUE, draw_means=TRUE, draw_ellipsoids=F, draw_surfaces=F)
+```
+
+![](https://raw.githubusercontent.com/GeigenPrinzipal/afCEC/gh-pages/static/airplane.png)
+![](https://raw.githubusercontent.com/GeigenPrinzipal/afCEC/gh-pages/static/airplane_c.png)
+![](https://raw.githubusercontent.com/GeigenPrinzipal/afCEC/gh-pages/static/airplane_p.png)
+
