@@ -99,3 +99,16 @@ pairs(iris[,1:4], col=result$labels+1, pch =18, cex=1)
 ![](https://raw.githubusercontent.com/GeigenPrinzipal/afCEC/gh-pages/static/iris.png)
 ![](https://raw.githubusercontent.com/GeigenPrinzipal/afCEC/gh-pages/static/iris_c.png)
 
+```R
+library(afCEC)
+data(quakes)
+pairs(quakes[,1:5], pch =18, cex=1)
+
+result <- afCEC(as.matrix(quakes[,1:5]), 3,  numberOfStarts=30);
+pairs(quakes[,1:5], col=result$labels+1, pch =18, cex=1)
+```
+
+![](https://raw.githubusercontent.com/GeigenPrinzipal/afCEC/gh-pages/static/quakes.png)
+![](https://raw.githubusercontent.com/GeigenPrinzipal/afCEC/gh-pages/static/quakes_c.png)
+
+
