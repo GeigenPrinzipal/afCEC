@@ -86,3 +86,19 @@ plot3d(ship,col=result$labels+1)
 ![](https://raw.githubusercontent.com/GeigenPrinzipal/afCEC/gh-pages/static/ship.png)
 ![](https://raw.githubusercontent.com/GeigenPrinzipal/afCEC/gh-pages/static/ship_c.png)
 ![](https://raw.githubusercontent.com/GeigenPrinzipal/afCEC/gh-pages/static/ship_p.png)
+
+```R
+library(afCEC)
+data(iris)
+pairs(iris[,1:4], pch =18, cex=1)
+dev.copy(png,'C:\\git_zajecia\\afCEC\\static\\iris.png', width = 300, height = 300)
+dev.off()
+result <- afCEC(as.matrix(iris[,1:4]), 3,  numberOfStarts=30);
+pairs(iris[,1:4], col=result$labels+1, pch =18, cex=1)
+dev.copy(png,'C:\\git_zajecia\\afCEC\\static\\iris_c.png', width = 300, height = 300)
+dev.off()
+```
+
+![](https://raw.githubusercontent.com/GeigenPrinzipal/afCEC/gh-pages/static/iris.png)
+![](https://raw.githubusercontent.com/GeigenPrinzipal/afCEC/gh-pages/static/iris_c.png)
+
