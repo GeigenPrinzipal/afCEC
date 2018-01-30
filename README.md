@@ -59,6 +59,7 @@ plot(result)
 ![](https://raw.githubusercontent.com/GeigenPrinzipal/afCEC/gh-pages/static/dog_c.png)
 
 ```R
+library(afCEC)
 data(airplane);
 plot3d(airplane,col="black",aspect=FALSE)
 
@@ -72,6 +73,7 @@ plot(result, draw_points=TRUE, draw_means=TRUE, draw_ellipsoids=F, draw_surfaces
 ![](https://raw.githubusercontent.com/GeigenPrinzipal/afCEC/gh-pages/static/airplane_p.png)
 
 ```R
+library(afCEC)
 data(ship);
 plot3d(ship,col="black",aspect=FALSE)
 
