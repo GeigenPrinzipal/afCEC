@@ -71,3 +71,16 @@ plot(result, draw_points=TRUE, draw_means=TRUE, draw_ellipsoids=F, draw_surfaces
 ![](https://raw.githubusercontent.com/GeigenPrinzipal/afCEC/gh-pages/static/airplane_c.png)
 ![](https://raw.githubusercontent.com/GeigenPrinzipal/afCEC/gh-pages/static/airplane_p.png)
 
+```R
+data(ship);
+plot3d(ship,col="black",aspect=FALSE)
+
+result <- afCEC(ship, 20,  numberOfStarts=30);
+
+plot(result, draw_points=T, draw_means=F, draw_surfaces=F,pointsSize3D=0.001)
+plot3d(ship,col=result$labels+1)
+```
+
+![](https://raw.githubusercontent.com/GeigenPrinzipal/afCEC/gh-pages/static/ship.png)
+![](https://raw.githubusercontent.com/GeigenPrinzipal/afCEC/gh-pages/static/ship_c.png)
+![](https://raw.githubusercontent.com/GeigenPrinzipal/afCEC/gh-pages/static/ship_p.png)
